@@ -1,0 +1,96 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ExecFleet API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/employee": {
+      "post": {
+        "summary": "Create a new employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all users",
+        "responses": {
+          "200": {
+            "description": "List of users"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": ["name", "email", "password", "mobile_number", "company_id", "role"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "yourStrongPassword123"
+          },
+          "mobile_number": {
+            "type": "string",
+            "example": "03001234567"
+          },
+          "city": {
+            "type": "string",
+            "example": "Lahore"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Street Name"
+          },
+          "route": {
+            "type": "string",
+            "example": "North"
+          },
+          "company_id": {
+            "type": "string",
+            "example": "60f71bf75fc13c001c9e4c25"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "employee", "driver"],
+            "example": "admin"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "31.5204"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "74.3587"
+          }
+        }
+      }
+    }
+  }
+}
