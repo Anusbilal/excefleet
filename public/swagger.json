@@ -236,6 +236,60 @@
           }
         }
       }
+    },
+    "/employee/ride": {
+      "post": {
+        "tags": [
+          "Ride"
+        ],
+        "summary": "Create a ride entry",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ride": {
+                    "type": "string",
+                    "enum": [
+                      "go_with_you",
+                      "go_by_myself"
+                    ]
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "company_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ride",
+                  "user_id",
+                  "company_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ride created"
+          },
+          "400": {
+            "description": "Validation or database error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
     }
   },
   "components": {
