@@ -9,7 +9,6 @@ export const createUserSchema = z.object({
     address: z.string().optional(),
     route: z.string().optional(),
     company_id: z.string(),
-    role: z.enum(['admin', 'employee', 'driver']),
     latitude: z.string().optional(),
     longitude: z.string().optional(),
 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signInSchema } from "@/utils/validation/authSchema";
-import { User } from "@/models/User";
+import { Employee } from "@/models/Employee";
 import { Otp } from "@/models/Otp";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/mongoose";
@@ -22,12 +22,12 @@ export async function POST(req: NextRequest) {
     const { email, password, role } = parsed.data;
 
     await connectDB();
-    const user = await User.findOne({ email, role });
-    if (!user) {
+    const employee = await Employee.findOne({ email, role });
+    if (!employee) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, employee.password);
     if (!isMatch) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }

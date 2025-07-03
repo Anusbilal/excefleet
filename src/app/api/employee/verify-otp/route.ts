@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyOtpSchema } from "@/utils/validation/authSchema";
 import { Otp } from "@/models/Otp";
 import jwt from "jsonwebtoken";
-import { User } from "@/models/User";
+import { Employee } from "@/models/Employee";
+import { connectDB } from "@/lib/mongoose";
+
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -19,9 +21,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 401 });
         }
         await Otp.deleteMany({ email });
-        const user = await User.findOne({ email });
+        await connectDB();
+        const employee = await Employee.findOne({ email });
         const token = jwt.sign(
-            { userId: user._id, role: user.role, email: user.email },
+            { userId: employee._id, role: employee.role, email: employee.email },
             JWT_SECRET,
             { expiresIn: "7d" }
         );
