@@ -19,10 +19,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
     }
 
-    const { email, password, role } = parsed.data;
+    const { email, password } = parsed.data;
 
     await connectDB();
-    const employee = await Employee.findOne({ email, role });
+    const employee = await Employee.findOne({ email });
     if (!employee) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
@@ -36,7 +36,10 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
 
     await Otp.create({ email, otp, expiresAt });
-    await sendOtpEmail(email, otp); 
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
+    await sendOtpEmail({ to: email as string, otp });
     return NextResponse.json({ message: "OTP has been sent to your email." });
   } catch (error) {
     console.error("Sign-in error:", error);

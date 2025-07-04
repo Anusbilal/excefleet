@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendOtpEmail(to: string, otp: string) {
+export async function sendOtpEmail({ to, otp }: { to: string; otp: string }) {
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to,
