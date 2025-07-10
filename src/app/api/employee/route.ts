@@ -25,8 +25,5 @@ export async function GET(req: NextRequest) {
   
   await connectDB();
   const result = await getAllEmployees();
-
-  return NextResponse.json(result, {
-    status: result.success ? 200 : 500,
-  });
+  return NextResponse.json(result, { status: 200 });
 }

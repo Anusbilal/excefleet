@@ -6,7 +6,6 @@ export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData();
         const file = formData.get("profile_picture") as File | null;
-        console.log(formData);
         await connectDB();
         const payload = {
             first_name: formData.get("first_name") as string,
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error("Driver creation failed:", error);
         return NextResponse.json(
-            { success: false, error: "Server error" },
+            { error: "Server error" },
             { status: 500 }
         );
     }

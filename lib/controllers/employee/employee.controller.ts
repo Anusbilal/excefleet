@@ -17,8 +17,7 @@ export async function createEmployee(data: unknown) {
   const existingEmployee = await Employee.findOne({ email: body.email });
   if (existingEmployee) {
     return {
-      success: true,
-      message: { message: "Employee already exists" },
+      message: "Employee already exists",
       data: {
         name: existingEmployee.name,
         email: existingEmployee.email,
@@ -57,7 +56,6 @@ export async function createEmployee(data: unknown) {
 export async function getAllEmployees() {
   const employees = await Employee.find().select("-password");
   return {
-    success: true,
     data: employees,
   };
 }
