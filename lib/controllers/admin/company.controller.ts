@@ -83,12 +83,22 @@ export async function getCompaniesController(req: NextRequest) {
 
   const query = q ? { name: { $regex: q, $options: "i" } } : {};
 
+  const total = await Company.countDocuments(query);
+
   const companies = await Company.find(query)
     .skip((page - 1) * size)
     .limit(size)
     .select("name address email phone contact_person");
 
-  return NextResponse.json(companies);
+  return NextResponse.json({
+    data: companies,
+    pagination: {
+      total,
+      page,
+      size,
+      totalPages: Math.ceil(total / size),
+    },
+  });
 }
 
 export async function updateCompanyController(req: NextRequest) {
