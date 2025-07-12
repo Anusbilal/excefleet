@@ -3,13 +3,23 @@ import { Types } from "mongoose";
 import { connectDB } from "@/lib/mongoose";
 import { Employee } from "@/models/Employee";
 import { createUserSchema } from "@/utils/validation/userSchema";
+import { checkCompanyExists } from "../../repository/CheckValidity"
 import bcrypt from "bcryptjs";
 import path from "path";
 import fs from "fs/promises";
 
 export async function createEmployee(data: FormData) {
   await connectDB();
-
+  const companyId = data.get("company_id")?.toString();
+  if (companyId) {
+    const companyCheck = await checkCompanyExists(companyId);
+    if (!companyCheck.success) {
+      return {
+        success: false,
+        error: "Invalid or non-existing company_id",
+      };
+    }
+  }
   const logo = data.get("logo") as File | null;
   let uploadedPath = "";
 
@@ -20,7 +30,7 @@ export async function createEmployee(data: FormData) {
       if (key.startsWith("location.")) {
         const locKey = key.split(".")[1];
         if (!bodyObject.location) bodyObject.location = {};
-        bodyObject.location[locKey] = parseFloat(value); 
+        bodyObject.location[locKey] = parseFloat(value);
       } else {
         bodyObject[key] = value;
       }
@@ -102,12 +112,12 @@ export async function getAllEmployees({
 
   const filter = q
     ? {
-        $or: [
-          { first_name: regex },
-          { last_name: regex },
-          { email: regex },
-        ],
-      }
+      $or: [
+        { first_name: regex },
+        { last_name: regex },
+        { email: regex },
+      ],
+    }
     : {};
 
   const employees = await Employee.find(filter)
