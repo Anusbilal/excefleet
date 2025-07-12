@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
 	GoogleMap,
 	useJsApiLoader,
@@ -8,6 +8,7 @@ import {
 } from "@react-google-maps/api";
 import { TRouteEmployeeRow } from "@/types/route.types";
 import { Separator } from "../ui/separator";
+import { COLORS } from "@/constant/colors";
 
 const containerStyle = {
 	width: "100%",
@@ -33,22 +34,29 @@ function CustomGoogleMap({ employeeRows }: TProps) {
 		useState<google.maps.DirectionsResult | null>(null);
 	const [distanceKm, setDistanceKm] = useState<number | null>(null);
 
-	useEffect(() => {
-		if (!isLoaded) return;
-
-		// Extract only selected employees with valid locations
-		const selected = employeeRows
+	// Compute selected employees with locations
+	const selected = useMemo(() => {
+		return employeeRows
 			.map((row) => row.employeeSelected)
 			.filter((e) => e?.location) as NonNullable<
 			TRouteEmployeeRow["employeeSelected"]
 		>[];
+	}, [employeeRows]);
+
+	const fromName = selected[0]?.address || "Origin";
+	const toName = selected[selected.length - 1]?.address || "Destination";
+	const pickupCount = selected.length;
+
+	useEffect(() => {
+		if (!isLoaded) return;
 
 		if (selected.length < 2) {
-			// Not enough points to calculate directions
 			setDirections(null);
 			setDistanceKm(null);
 			return;
 		}
+
+		const service = new google.maps.DirectionsService();
 
 		const origin = selected[0].location;
 		const destination = selected[selected.length - 1].location;
@@ -57,7 +65,6 @@ function CustomGoogleMap({ employeeRows }: TProps) {
 			stopover: true,
 		}));
 
-		const service = new google.maps.DirectionsService();
 		service.route(
 			{
 				origin,
@@ -69,7 +76,6 @@ function CustomGoogleMap({ employeeRows }: TProps) {
 				if (status === "OK" && result) {
 					setDirections(result);
 
-					// Calculate total distance
 					const meters = result.routes[0].legs.reduce(
 						(sum, leg) => sum + (leg.distance?.value || 0),
 						0,
@@ -82,11 +88,11 @@ function CustomGoogleMap({ employeeRows }: TProps) {
 				}
 			},
 		);
-	}, [isLoaded, employeeRows]);
+	}, [isLoaded, selected]);
 
 	if (!isLoaded) return <div>Loading...</div>;
 
-	// Default center if no directions
+	// Center map
 	const center =
 		directions?.routes[0]?.legs?.[0]?.start_location?.toJSON() ||
 		fallbackCenter;
@@ -104,22 +110,35 @@ function CustomGoogleMap({ employeeRows }: TProps) {
 					fullscreenControl: false,
 				}}
 			>
-				{directions && <DirectionsRenderer directions={directions} />}
+				{directions && (
+					<DirectionsRenderer
+						directions={directions}
+						options={{
+							polylineOptions: {
+								strokeColor: COLORS.colorPallet.russianViolet[500],
+								strokeWeight: 4,
+							},
+							markerOptions: {
+								visible: false,
+							},
+						}}
+					/>
+				)}
 			</GoogleMap>
 
-			<div className='flex items-center justify-between text-sm text-neutral-1000 font-semibold flex-wrap gap-2 '>
-				<div className='flex items-center  flex-wrap gap-[10px] h-full'>
-					<span>North nazimabad </span>
+			<div className='flex items-center justify-between text-sm text-neutral-1000 font-semibold flex-wrap gap-2 mt-2'>
+				<div className='flex items-center flex-wrap gap-x-[10px] md:gap-[10px] '>
+					<span>{fromName}</span>
 					<span className='font-normal'>to</span>
-					<span>Dolman mall clifton </span>
+					<span>{toName}</span>
 				</div>
 
-				<div className='flex items-center  flex-wrap gap-[10px] h-full'>
-					<span className='font-normal'>Pickup</span>
-					<span>7</span>
+				<div className='flex items-center flex-wrap gap-x-[10px]  md:gap-[10px] '>
+					<span className='font-normal'>Pickups</span>
+					<span>{pickupCount}</span>
 					<Separator orientation='vertical' className='bg-neutral-600 ml-1.5' />
 					<span className='font-normal'>Kilometers (one-way)</span>
-					<span>35</span>
+					<span>{distanceKm?.toFixed(2) || "-"}</span>
 				</div>
 			</div>
 		</>

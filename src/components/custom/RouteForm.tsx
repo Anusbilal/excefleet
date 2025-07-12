@@ -102,7 +102,7 @@ const RouteForm = ({
 					</div>
 				</div>
 
-				<div className='md:col-span-2 flex flex-col gap-4'>
+				<div className='md:col-span-2 flex flex-col gap-4 h-auto'>
 					<span className='text-lg leading-[26px]  font-semibold text-neutral-1000'>
 						Map
 					</span>
