@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         await connectDB();
         const employee = await Employee.findOne({ email });
         const token = jwt.sign(
-            { userId: employee._id, role: employee.role, email: employee.email },
+            { userId: employee._id, role: "employee", email: employee.email },
             JWT_SECRET,
             { expiresIn: "7d" }
         );

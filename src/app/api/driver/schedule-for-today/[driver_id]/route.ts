@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDriverScheduleToday } from "@/lib/controllers/driver/schedule.controller";
+import { verifyToken } from "@/utils/middleware/auth";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { driver_id: string } }
 ) {
+  const auth = await verifyToken(req);
+  if (auth instanceof NextResponse) return auth;
   const body = await req.json();
   
-  // Create an async function to "await" the params
   const getParams = async () => params;
   const { driver_id } = await getParams();
 

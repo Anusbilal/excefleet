@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongoose";
 import { Schedule } from "@/models/Schedule";
 import mongoose from "mongoose";
+import { verifyToken } from "@/utils/middleware/auth";
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await verifyToken(req);
+    if (auth instanceof NextResponse) return auth;
     await connectDB();
 
     const body = await req.json();
