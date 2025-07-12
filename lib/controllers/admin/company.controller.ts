@@ -12,10 +12,10 @@ export async function createCompanyController(req: NextRequest) {
 
     const formData = await req.formData();
     const logo = formData.get("logo") as File;
+    let uploadedPath = "";
 
     const password = formData.get("password")?.toString() || "";
     const hashedPassword = await bcrypt.hash(password, 10);
-    let uploadedPath = "";
     const email = formData.get("email")?.toString() || "";
 
     const existingCompany = await Company.findOne({ email });
@@ -87,6 +87,7 @@ export async function getCompaniesController(req: NextRequest) {
 
   const companies = await Company.find(query)
     .skip((page - 1) * size)
+    .sort({ createdAt: -1 })
     .limit(size)
     .select("name address email phone contact_person");
 
@@ -101,12 +102,11 @@ export async function getCompaniesController(req: NextRequest) {
   });
 }
 
-export async function updateCompanyController(req: NextRequest) {
+export async function updateCompanyController(req: NextRequest, company_id: string) {
   try {
     await connectDB();
 
     const formData = await req.formData();
-    const company_id = formData.get("company_id")?.toString();
     if (!company_id || !Types.ObjectId.isValid(company_id)) {
       return NextResponse.json({ message: "Invalid company ID" }, { status: 400 });
     }
@@ -169,4 +169,14 @@ export async function updateCompanyController(req: NextRequest) {
     console.error("Update error:", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
+}
+
+export async function getCompanyById(company_id: string) {
+  if (!Types.ObjectId.isValid(company_id)) return null;
+
+  const company = await Company.findById(company_id).select(
+    "logo_url location bussiness_nature name number_of_employees address city state email phone contact_person login_email"
+  );
+
+  return company;
 }

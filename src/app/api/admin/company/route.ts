@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCompanyController, getCompaniesController, updateCompanyController } from "@/lib/controllers/admin/company.controller";
-import { verifyToken } from "@/utils/middleware/auth";
+import { requireRole } from "@/utils/middleware/roleGuard";
 
 export const config = {
   api: {
@@ -9,25 +9,16 @@ export const config = {
 };
 
 export async function POST(req: NextRequest) {
-  const tokenResult = await verifyToken(req);
-  if (tokenResult instanceof NextResponse) {
-    return tokenResult;
-  }
+  const auth = await requireRole(req, ["admin", "super_admin"]);
+
+  if (auth instanceof NextResponse) return auth;
   return await createCompanyController(req);
 }
 
 
 export async function GET(req: NextRequest) {
-  const tokenResult = await verifyToken(req);
-  if (tokenResult instanceof NextResponse) {
-    return tokenResult;
-  }
+  const auth = await requireRole(req, ["admin", "super_admin"]);
 
+  if (auth instanceof NextResponse) return auth;
   return await getCompaniesController(req);
-}
-
-export async function PUT(req: NextRequest) {
-  const tokenResult = await verifyToken(req);
-  if (tokenResult instanceof NextResponse) return tokenResult;
-  return await updateCompanyController(req);
 }
