@@ -5,12 +5,68 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/sign-in": {
+    "/api/admin": {
       "post": {
         "tags": [
-          "Auth"
+          "Admin"
         ],
-        "summary": "Send OTP to email",
+        "summary": "Create a new admin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "super_admin"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Admin created successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "409": {
+            "description": "Admin already exists"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/sign-in": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Admin sign-in",
         "requestBody": {
           "required": true,
           "content": {
@@ -24,19 +80,11 @@
                   },
                   "password": {
                     "type": "string"
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "employee",
-                      "driver"
-                    ]
                   }
                 },
                 "required": [
                   "email",
-                  "password",
-                  "role"
+                  "password"
                 ]
               }
             }
@@ -44,7 +92,188 @@
         },
         "responses": {
           "200": {
-            "description": "OTP has been sent to your email."
+            "description": "Admin signed in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/company": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Create a new company",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Company"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Company added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "logo_url": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "contact_person": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Company with this login email already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all companies",
+        "responses": {
+          "200": {
+            "description": "List of companies"
+          }
+        }
+      }
+    },
+    "/api/admin/company/{company_id}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get company by ID",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found"
+          },
+          "404": {
+            "description": "Company not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update company by ID",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Company"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Company updated"
           },
           "400": {
             "description": "Validation error"
@@ -52,12 +281,537 @@
         }
       }
     },
-    "/verify-otp": {
+    "/api/admin/employee": {
       "post": {
         "tags": [
-          "Auth"
+          "Admin"
         ],
-        "summary": "Verify OTP and return JWT token",
+        "summary": "Create a new employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Employee"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Employee"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all employees",
+        "responses": {
+          "200": {
+            "description": "List of employees"
+          }
+        }
+      }
+    },
+    "/api/admin/employee/{employee_id}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get employee by ID",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee found"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      }
+    },
+    "/api/admin/driver": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Create a new driver",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Driver"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Driver created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Driver"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get all drivers",
+        "responses": {
+          "200": {
+            "description": "List of drivers"
+          }
+        }
+      }
+    },
+    "/api/admin/driver/{id}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get driver by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Driver found"
+          },
+          "404": {
+            "description": "Driver not found"
+          }
+        }
+      }
+    },
+    "/api/driver/attendance": {
+      "post": {
+        "tags": [
+          "Drivers"
+        ],
+        "summary": "Mark driver attendance",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "driver_id": {
+                    "type": "string"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "driver_id",
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attendance marked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/driver/schedule-for-today/{driver_id}": {
+      "post": {
+        "tags": [
+          "Drivers",
+          "Schedule"
+        ],
+        "summary": "Get today's schedule for driver",
+        "parameters": [
+          {
+            "name": "driver_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "latitude",
+                  "longitude"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schedule returned"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/driver/seed-schedules": {
+      "post": {
+        "tags": [
+          "Drivers",
+          "Schedule"
+        ],
+        "summary": "Seed dummy schedules for drivers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "driver_id": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "stops": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "office": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "driver_id",
+                    "date",
+                    "stops",
+                    "office"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schedules seeded"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/employee/ride": {
+      "post": {
+        "tags": [
+          "Employees",
+          "Ride"
+        ],
+        "summary": "Create a ride entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ride"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ride created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Ride"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or database error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/rating": {
+      "post": {
+        "tags": [
+          "Employees",
+          "Rating"
+        ],
+        "summary": "Create a rating for a ride",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ride_id": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "comment": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ride_id",
+                  "rating"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rating created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "rating": {
+                          "type": "number"
+                        },
+                        "created_by": {
+                          "type": "string"
+                        },
+                        "driver_id": {
+                          "type": "string"
+                        },
+                        "timestamp": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/employee/verify-otp": {
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Verify OTP for employee",
         "requestBody": {
           "required": true,
           "content": {
@@ -85,25 +839,55 @@
         },
         "responses": {
           "200": {
-            "description": "OTP verified successfully with token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "token": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "OTP verified successfully with token"
           },
           "401": {
             "description": "Invalid or expired OTP"
+          }
+        }
+      }
+    },
+    "/api/employee/sign-in": {
+      "post": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Employee sign-in",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP has been sent to your email."
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       }
@@ -753,77 +1537,1172 @@
           }
         }
       }
+    },
+    "/admin/company/{company_id}": {
+      "get": {
+        "tags": [
+          "Admin",
+          "Company"
+        ],
+        "summary": "Get company by ID",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found"
+          },
+          "404": {
+            "description": "Company not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin",
+          "Company"
+        ],
+        "summary": "Update company by ID",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Company updated"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/admin/employee/{employee_id}": {
+      "get": {
+        "tags": [
+          "Admin",
+          "Employees"
+        ],
+        "summary": "Get employee by ID",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee found"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin",
+          "Employees"
+        ],
+        "summary": "Update employee by ID",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/admin/driver/{id}": {
+      "get": {
+        "tags": [
+          "Admin",
+          "Drivers"
+        ],
+        "summary": "Get driver by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Driver found"
+          },
+          "404": {
+            "description": "Driver not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin",
+          "Drivers"
+        ],
+        "summary": "Update driver by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Driver updated"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/driver/{driver_id}": {
+      "get": {
+        "tags": [
+          "Drivers"
+        ],
+        "summary": "Get driver by ID",
+        "parameters": [
+          {
+            "name": "driver_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Driver found"
+          },
+          "404": {
+            "description": "Driver not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Drivers"
+        ],
+        "summary": "Update driver by ID",
+        "parameters": [
+          {
+            "name": "driver_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Driver updated"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/employee/{employee_id}": {
+      "get": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Get employee by ID",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee found"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Update employee by ID",
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/admin/vehicle": {
+      "post": {
+        "summary": "Create a new vehicle with image upload",
+        "tags": [
+          "Admin",
+          "Vehicle"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Array of image files"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "registration_city": {
+                    "type": "string"
+                  },
+                  "registration_number": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "lat": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "lng": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "driver_id": {
+                    "type": "string",
+                    "description": "MongoDB ObjectId of the driver"
+                  }
+                },
+                "required": [
+                  "images",
+                  "first_name",
+                  "last_name",
+                  "phone",
+                  "type",
+                  "registration_city",
+                  "registration_number",
+                  "address",
+                  "lat",
+                  "lng",
+                  "driver_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vehicle created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Vehicle ID"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "registration_city": {
+                      "type": "string"
+                    },
+                    "registration_number": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "driver_name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Vehicle with this registration number already exists"
+          },
+          "404": {
+            "description": "Driver not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/vehicles": {
+      "get": {
+        "tags": [
+          "Admin",
+          "Vehicle"
+        ],
+        "summary": "Get all vehicles",
+        "description": "Fetches a paginated list of vehicles with optional search by registration number.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Page size (default: 10)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search by registration number (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of vehicles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "60d21b4667d0d8992e610c85"
+                      },
+                      "first_name": {
+                        "type": "string",
+                        "example": "Ali"
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "example": "Khan"
+                      },
+                      "phone": {
+                        "type": "string",
+                        "example": "03001234567"
+                      },
+                      "type": {
+                        "type": "string",
+                        "example": "Car"
+                      },
+                      "registration_city": {
+                        "type": "string",
+                        "example": "Karachi"
+                      },
+                      "registration_number": {
+                        "type": "string",
+                        "example": "ABC-123"
+                      },
+                      "address": {
+                        "type": "string",
+                        "example": "Street 123, DHA Phase 4"
+                      },
+                      "driver_name": {
+                        "type": "string",
+                        "example": "Ali Khan"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Failed to fetch vehicles"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/vehicle/{vehicle_id}": {
+      "put": {
+        "tags": [
+          "Admin",
+          "Vehicle"
+        ],
+        "summary": "Update vehicle details",
+        "description": "Updates a vehicle's details and optionally its image files.",
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "path",
+            "required": true,
+            "description": "The vehicle's MongoDB ObjectId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "registration_city": {
+                    "type": "string"
+                  },
+                  "registration_number": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lng": {
+                    "type": "number"
+                  },
+                  "driver_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vehicle updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "64cabc..."
+                    },
+                    "first_name": {
+                      "type": "string",
+                      "example": "Ali"
+                    },
+                    "last_name": {
+                      "type": "string",
+                      "example": "Raza"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "example": "03001234567"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "Car"
+                    },
+                    "registration_city": {
+                      "type": "string",
+                      "example": "Karachi"
+                    },
+                    "registration_number": {
+                      "type": "string",
+                      "example": "ABC-123"
+                    },
+                    "address": {
+                      "type": "string",
+                      "example": "Street 123"
+                    },
+                    "driver_name": {
+                      "type": "string",
+                      "example": "Ali Raza"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields"
+          },
+          "404": {
+            "description": "Vehicle or driver not found"
+          },
+          "409": {
+            "description": "Duplicate registration number"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/vehicle": {
+      "get": {
+        "tags": [
+          "Admin","Vehicle"
+        ],
+        "summary": "Get vehicle by ID",
+        "description": "Fetches a vehicle's details using its `vehicle_id`.",
+        "parameters": [
+          {
+            "name": "vehicle_id",
+            "in": "query",
+            "required": true,
+            "description": "MongoDB ObjectId of the vehicle",
+            "schema": {
+              "type": "string",
+              "example": "64cabc1234567890abcdef12"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vehicle retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "64cabc1234567890abcdef12"
+                    },
+                    "image_urls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    },
+                    "first_name": {
+                      "type": "string",
+                      "example": "Ali"
+                    },
+                    "last_name": {
+                      "type": "string",
+                      "example": "Raza"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "example": "03001234567"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "Car"
+                    },
+                    "registration_city": {
+                      "type": "string",
+                      "example": "Karachi"
+                    },
+                    "registration_number": {
+                      "type": "string",
+                      "example": "ABC-123"
+                    },
+                    "address": {
+                      "type": "string",
+                      "example": "Street 123"
+                    },
+                    "location": {
+                      "type": "object",
+                      "properties": {
+                        "lat": {
+                          "type": "number",
+                          "example": 24.8607
+                        },
+                        "lng": {
+                          "type": "number",
+                          "example": 67.0011
+                        }
+                      }
+                    },
+                    "driver_id": {
+                      "type": "string",
+                      "example": "64df1234567890abcdef12"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid vehicle_id"
+          },
+          "404": {
+            "description": "Vehicle not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "User": {
+      "Admin": {
         "type": "object",
-        "required": [
-          "name",
-          "email",
-          "password",
-          "mobile_number",
-          "company_id",
-          "role"
-        ],
         "properties": {
           "name": {
-            "type": "string",
-            "example": "John Doe"
+            "type": "string"
           },
           "email": {
             "type": "string",
-            "format": "email",
-            "example": "john@example.com"
+            "format": "email"
           },
           "password": {
-            "type": "string",
-            "example": "yourStrongPassword123"
-          },
-          "mobile_number": {
-            "type": "string",
-            "example": "03001234567"
-          },
-          "city": {
-            "type": "string",
-            "example": "Lahore"
-          },
-          "address": {
-            "type": "string",
-            "example": "123 Street Name"
-          },
-          "route": {
-            "type": "string",
-            "example": "North"
-          },
-          "company_id": {
-            "type": "string",
-            "example": "60f71bf75fc13c001c9e4c25"
+            "type": "string"
           },
           "role": {
             "type": "string",
             "enum": [
               "admin",
-              "employee",
-              "driver"
-            ],
-            "example": "admin"
+              "super_admin"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password",
+          "role"
+        ]
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
           },
-          "latitude": {
-            "type": "string",
-            "example": "31.5204"
+          "name": {
+            "type": "string"
           },
-          "longitude": {
-            "type": "string",
-            "example": "74.3587"
+          "address": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "contact_person": {
+            "type": "string"
+          },
+          "logo_url": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "bussiness_nature": {
+            "type": "string"
+          },
+          "number_of_employees": {
+            "type": "number"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "lng": {
+            "type": "number"
           }
         }
       },
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+      "Driver": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "mobile_number": {
+            "type": "string"
+          },
+          "company_id": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "profile_picture": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "mobile_number": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "company_id": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "string"
+          }
+        }
+      },
+      "Ride": {
+        "type": "object",
+        "properties": {
+          "ride": {
+            "type": "string",
+            "enum": [
+              "go_with_you",
+              "go_by_myself"
+            ]
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "company_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Otp": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "otp": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Rating": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "number"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "driver_id": {
+            "type": "string"
+          },
+          "feedback": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rating",
+          "created_by",
+          "driver_id"
+        ]
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "driver_id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "lat": {
+                  "type": "number"
+                },
+                "long": {
+                  "type": "number"
+                },
+                "pickup_time": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "picked",
+                    "missed"
+                  ]
+                }
+              }
+            }
+          },
+          "office": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "long": {
+                "type": "number"
+              },
+              "address": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "driver_id",
+          "date",
+          "stops",
+          "office"
+        ]
+      },
+      "DriverAttendance": {
+        "type": "object",
+        "properties": {
+          "driver_id": {
+            "type": "string"
+          },
+          "company_id": {
+            "type": "string"
+          },
+          "attendance": {
+            "type": "string",
+            "enum": [
+              "on_duty",
+              "off"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "driver_id",
+          "company_id",
+          "attendance"
+        ]
+      },
+      "Vehicle": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Vehicle ID"
+          },
+          "image_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "registration_city": {
+            "type": "string"
+          },
+          "registration_number": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number",
+                "format": "float"
+              },
+              "lng": {
+                "type": "number",
+                "format": "float"
+              }
+            }
+          },
+          "driver_id": {
+            "type": "string",
+            "description": "MongoDB ObjectId referencing the Driver"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "phone",
+          "type",
+          "registration_city",
+          "registration_number",
+          "address",
+          "location",
+          "driver_id"
+        ]
       }
     }
   }
