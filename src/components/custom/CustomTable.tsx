@@ -67,24 +67,25 @@ const CustomTable = ({
 						</span>
 					</div>
 
-					<Pagination className=' overflow-x-auto max-w-full whitespace-nowrap  pb-2 sm:pb-0'>
-						<PaginationContent>
-							<PaginationItem>
-								<PaginationLink
-									aria-label='Go to prev page'
-									size='default'
-									className={`
+					{page && totalPages && totalPages > 1 && (
+						<Pagination className=' overflow-x-auto max-w-full whitespace-nowrap  pb-2 sm:pb-0'>
+							<PaginationContent>
+								<PaginationItem>
+									<PaginationLink
+										aria-label='Go to prev page'
+										size='default'
+										className={`
 									${
 										!disabledPagination?.prev
 											? "hover:!text-primary-20 !text-neutral-800"
 											: "cursor-default hover:!bg-transparent !text-neutral-1400"
 									} rotate-180`}
-									onClick={handlePrevPage}
-								>
-									<PaginationArrow width={16} height={16} />
-								</PaginationLink>
-							</PaginationItem>
-							{page && totalPages && totalPages > 1 && (
+										onClick={handlePrevPage}
+									>
+										<PaginationArrow width={16} height={16} />
+									</PaginationLink>
+								</PaginationItem>
+
 								<>
 									<PaginationItem>
 										<PaginationLink
@@ -140,25 +141,25 @@ const CustomTable = ({
 										</PaginationItem>
 									)}
 								</>
-							)}
 
-							<PaginationItem>
-								<PaginationLink
-									aria-label='Go to next page'
-									size='default'
-									className={`
+								<PaginationItem>
+									<PaginationLink
+										aria-label='Go to next page'
+										size='default'
+										className={`
 									${
 										!disabledPagination?.next
 											? "hover:!text-primary-20 !text-neutral-800"
 											: "cursor-default hover:!bg-transparent !text-neutral-1400"
 									}`}
-									onClick={handleNextPage}
-								>
-									<PaginationArrow width={16} height={16} />
-								</PaginationLink>
-							</PaginationItem>
-						</PaginationContent>
-					</Pagination>
+										onClick={handleNextPage}
+									>
+										<PaginationArrow width={16} height={16} />
+									</PaginationLink>
+								</PaginationItem>
+							</PaginationContent>
+						</Pagination>
+					)}
 				</div>
 			)}
 		</div>

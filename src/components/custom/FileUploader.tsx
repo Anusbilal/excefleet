@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 import { IconType } from "./CustomInputField";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 type TProps = {
 	title: string;

@@ -7,7 +7,7 @@ import {
 	InputOTPGroup,
 	InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 type TProps = {
 	value: string;

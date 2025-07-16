@@ -1,5 +1,5 @@
 import { COLORS } from "@/constant/colors";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import React from "react";
 import { IconType } from "./CustomInputField";
 import { Button } from "../ui/button";

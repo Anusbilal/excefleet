@@ -1,9 +1,8 @@
 "use client";
-
 import { CheckIcon } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { IconType } from "./CustomInputField";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 export type TAutocomplete = {
 	id: string;

@@ -1,6 +1,6 @@
 import { PercentageArrow } from "@/assets/svg";
 import { COLORS } from "@/constant/colors";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type TProps = {

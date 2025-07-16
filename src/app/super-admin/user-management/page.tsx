@@ -1,7 +1,6 @@
 "use client";
 import { Chevron, User } from "@/assets/svg";
-import { Layout, PageTopBar, TablePageCard } from "@/components";
-import CustomTable from "@/components/custom/CustomTable";
+import { Layout, PageTopBar, TablePageCard, CustomTable } from "@/components";
 import { TableRow, TableCell } from "@/components/ui/table";
 import {
 	USER_MANAGEMENT_HEAD_DATA,

@@ -1,4 +1,4 @@
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import React, { SVGProps } from "react";
 import { Input } from "../ui/input";
 

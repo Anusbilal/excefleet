@@ -1,7 +1,6 @@
 "use client";
 import { Chevron, Vehicle as VehicleIcon } from "@/assets/svg";
-import { Layout, PageTopBar, TablePageCard } from "@/components";
-import CustomTable from "@/components/custom/CustomTable";
+import { Layout, PageTopBar, TablePageCard, CustomTable } from "@/components";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { VEHICLES_HEAD_DATA, VEHICLES_DATA } from "@/constant/tableData";
 import { useVehicles } from "@/hooks";

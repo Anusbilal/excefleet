@@ -6,7 +6,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "../ui/table";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 export type THead = {
 	title: React.ReactNode;

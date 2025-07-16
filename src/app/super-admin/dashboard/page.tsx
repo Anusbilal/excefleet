@@ -6,8 +6,8 @@ import {
 	DashboardCard,
 	Layout,
 	PageTopBar,
+	CustomTable,
 } from "@/components";
-import CustomTable from "@/components/custom/CustomTable";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { COMPANY_HEAD_DATA, DUMMY_DATA } from "@/constant/tableData";
 import { useDasboard } from "@/hooks";
@@ -19,7 +19,7 @@ const Dashboard = () => {
 
 	return (
 		<Layout>
-			<PageTopBar heading='Dashboard' />
+			<PageTopBar heading='Dashboard' isSearchBar />
 
 			<div className='flex flex-col gap-5 md:gap-10'>
 				<div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>

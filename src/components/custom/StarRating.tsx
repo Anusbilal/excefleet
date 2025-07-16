@@ -1,7 +1,7 @@
 import { StarIcon } from "@/assets/svg";
 import { COLORS } from "@/constant/colors";
+import { cn } from "@/lib/utils";
 import React from "react";
-import { twMerge } from "tailwind-merge";
 
 type StarRatingProps = {
 	rating: number;
@@ -23,13 +23,13 @@ export default function StarRating({
 	className,
 }: StarRatingProps) {
 	return (
-		<div className={twMerge(`flex items-center `, className)}>
+		<div className={cn(`flex items-center `, className)}>
 			{Array.from({ length: maxStars }, (_, i) => i + 1).map((starIndex) => (
 				<button
 					key={starIndex}
 					type='button'
 					onClick={() => onRatingChange(starIndex)}
-					className='focus:outline-none'
+					className='focus:outline-none cursor-pointer'
 				>
 					{starIndex <= rating ? (
 						<StarIcon width={starSize} height={starSize} color={filledColor} />

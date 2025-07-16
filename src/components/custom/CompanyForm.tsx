@@ -11,7 +11,7 @@ import { Chevron } from "@/assets/svg";
 import CustomInputField from "./CustomInputField";
 import { Separator } from "../ui/separator";
 import BackButton from "./BackButton";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 type TProps = {
 	onSubmit: () => void;

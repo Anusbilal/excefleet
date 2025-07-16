@@ -1,5 +1,4 @@
-import Link from "next/link";
-import AppSidebar from "./custom/AppSideBar";
+import { AppSideBar } from "@/components";
 import { SidebarProvider, SidebarTrigger } from "./ui/sidebar";
 
 type TProps = {
@@ -9,7 +8,7 @@ type TProps = {
 const Layout = ({ children }: TProps) => {
 	return (
 		<SidebarProvider>
-			<AppSidebar />
+			<AppSideBar />
 
 			<main className='md:px-6 md:py-10 md:p-0 p-5 bg-background flex-1 overflow-hidden '>
 				<div className='flex justify-end md:justify-start items-center mb-5'>
