@@ -1,11 +1,31 @@
-import { signInAdmin } from "@/lib/controllers/admin/auth.controller";
 import { NextRequest, NextResponse } from "next/server";
+import { Admin } from "@/models/Admin";
+import bcrypt from "bcryptjs";
+import { generateToken } from "@/utils/middleware/auth";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const result = await signInAdmin(body);
+  try {
+    const body = await req.json();
+    const { email, password } = body;
 
-  return NextResponse.json(result, {
-    status: result.token ? 200 : 401,
-  });
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 401 });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+    if (!isPasswordValid) {
+      return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 401 });
+    }
+
+    const token = generateToken({ id: admin._id, role: admin.role });
+
+    return NextResponse.json(
+      { message: "Signed in successfully.", token },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Admin sign-in error:", error);
+    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+  }
 }

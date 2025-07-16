@@ -3,6 +3,7 @@ import { signInSchema } from "@/utils/validation/authSchema";
 import { Driver } from "@/models/Driver";
 import { connectDB } from "@/lib/mongoose";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -19,20 +20,27 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
 
-    const driver = await Driver.findOne({ mobile_number: phone });
+    const driver = await Driver.findOne({ login_phone: phone });
     if (!driver) {
       return NextResponse.json({ error: "Invalid phone number or pin" }, { status: 401 });
     }
 
-    if (!driver.pin || driver.pin !== pin) {
+    if (!driver.pin) {
+      return NextResponse.json({ error: "Invalid phone number or pin" }, { status: 401 });
+    }
+
+    const isPinValid = await bcrypt.compare(pin as string, driver.pin as string);
+
+
+    if (!isPinValid) {
       return NextResponse.json({ error: "Invalid phone number or pin" }, { status: 401 });
     }
 
     const token = jwt.sign(
       {
         userId: driver._id,
-        role: "driver", 
-        phone: driver.mobile_number,
+        role: "driver",
+        phone: driver.login_phone,
       },
       JWT_SECRET,
       { expiresIn: "7d" }

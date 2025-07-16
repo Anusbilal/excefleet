@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
     await Schedule.insertMany(schedules);
 
     return NextResponse.json({
-      success: true,
       message: `${schedules.length} dummy schedules inserted successfully.`,
     });
   } catch (error) {

@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         }
         await Otp.deleteMany({ email });
         await connectDB();
-        const employee = await Employee.findOne({ email });
+        const employee = await Employee.findOne({ login_email:email });
         const token = jwt.sign(
             { userId: employee._id, role: "employee", email: employee.email },
             JWT_SECRET,
