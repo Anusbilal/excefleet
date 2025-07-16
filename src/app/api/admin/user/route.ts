@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
 import bcrypt from "bcryptjs";
 import { User } from "@/models/User"; 
 import { connectDB } from "@/lib/mongoose";
 import { Types } from "mongoose";
+import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 
 async function saveFile(file: File): Promise<string> {
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const fileName = `${Date.now()}-${file.name}`;
-  const filePath = path.join(process.cwd(), "public/uploads", fileName);
-  await writeFile(filePath, buffer);
-  return `/uploads/${fileName}`;
+  const uploadedPath = await uploadFileToS3(file);
+  return uploadedPath;
 }
 
 export async function POST(req: NextRequest) {
@@ -215,6 +210,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
+                photo_url: user.photo_url || "",
             }
         );
     } catch (error) {

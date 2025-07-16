@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongoose";
 import { Vehicle } from "@/models/Vehicle";
 import { checkDriverExists } from "@/helper/CheckValidity";
-import path from "path";
-import fs from "fs/promises";
+import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 
 export const config = {
   api: {
@@ -56,11 +55,8 @@ export async function POST(req: NextRequest) {
 
     const uploadedPaths: string[] = [];
     for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const fileName = `${Date.now()}-${file.name}`;
-      const filePath = path.join(process.cwd(), "public/uploads", fileName);
-      await fs.writeFile(filePath, buffer);
-      uploadedPaths.push(`/uploads/${fileName}`);
+      const uploadedPath = await uploadFileToS3(file);
+      uploadedPaths.push(uploadedPath);
     }
 
     const newVehicle = await Vehicle.create({
@@ -81,15 +77,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-          id: newVehicle._id,
-          first_name: newVehicle.first_name,
-          last_name: newVehicle.last_name,
-          phone: newVehicle.phone,
-          type: newVehicle.type,
-          registration_city: newVehicle.registration_city,
-          registration_number: newVehicle.registration_number,
-          address: newVehicle.address,
-          driver_name: `${newVehicle.first_name} ${newVehicle.last_name}`,
+        id: newVehicle._id,
+        first_name: newVehicle.first_name,
+        last_name: newVehicle.last_name,
+        phone: newVehicle.phone,
+        type: newVehicle.type,
+        registration_city: newVehicle.registration_city,
+        registration_number: newVehicle.registration_number,
+        address: newVehicle.address,
+        driver_name: `${newVehicle.first_name} ${newVehicle.last_name}`,
       }
     );
   } catch (err) {
@@ -228,11 +224,8 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
     const uploadedPaths: string[] = [];
 
     for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const fileName = `${Date.now()}-${file.name}`;
-      const filePath = path.join(process.cwd(), "public/uploads", fileName);
-      await fs.writeFile(filePath, buffer);
-      uploadedPaths.push(`/uploads/${fileName}`);
+      const uploadedPath = await uploadFileToS3(file);
+      uploadedPaths.push(uploadedPath);
     }
 
     const updated = await Vehicle.findByIdAndUpdate(
@@ -254,7 +247,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
       },
       { new: true }
     );
-
+    
     return NextResponse.json({
       id: updated._id,
       first_name: updated.first_name,

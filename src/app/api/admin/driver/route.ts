@@ -3,19 +3,17 @@ import { requireRole } from "@/utils/middleware/roleGuard";
 import { connectDB } from "@/lib/mongoose";
 import { Driver } from "@/models/Driver";
 import { checkCompanyExists } from "@/helper/CheckValidity";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 import { Types } from "mongoose";
 import bcrypt from "bcryptjs";
 
 // Utility to save files
 async function saveFile(file: File): Promise<string> {
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const fileName = `${Date.now()}-${file.name}`;
-  const filePath = path.join(process.cwd(), "public/uploads", fileName);
-  await writeFile(filePath, buffer);
-  return `/uploads/${fileName}`;
+  if (!file || file.size === 0) {
+    return "";
+  }
+  const uploadedPath = await uploadFileToS3(file);
+  return uploadedPath;
 }
 
 // POST: Create a new driver
@@ -256,7 +254,7 @@ export async function PUT(req: NextRequest) {
   if (license_image) updateData.license_image_url = await saveFile(license_image);
 
   const updated = await Driver.findByIdAndUpdate(id, updateData, { new: true });
-
+  
   return NextResponse.json({
       name: `${updated.first_name} ${updated.last_name}`,
       email: updated.email || null,

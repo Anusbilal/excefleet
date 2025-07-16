@@ -3,10 +3,9 @@ import { requireRole } from "@/utils/middleware/roleGuard";
 import { connectDB } from "@/lib/mongoose";
 import { Employee } from "@/models/Employee";
 import { createUserSchema } from "@/utils/validation/userSchema";
+import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 import { checkCompanyExists } from "@/helper/CheckValidity";
 import bcrypt from "bcryptjs";
-import path from "path";
-import fs from "fs/promises";
 import { Types } from "mongoose";
 
 // POST - Create Employee
@@ -55,13 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (logo) {
-      const bytes = await logo.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const fileName = `${Date.now()}-${logo.name}`;
-      const filePath = path.join(process.cwd(), "public/uploads", fileName);
-
-      await fs.writeFile(filePath, buffer);
-      uploadedPath = `/uploads/${fileName}`;
+      uploadedPath = await uploadFileToS3(logo);
     }
 
     const body = parsed.data;
@@ -172,12 +165,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const filter = q
     ? {
-        $or: [
-          { first_name: regex },
-          { last_name: regex },
-          { email: regex },
-        ],
-      }
+      $or: [
+        { first_name: regex },
+        { last_name: regex },
+        { email: regex },
+      ],
+    }
     : {};
 
   try {
@@ -256,13 +249,10 @@ export async function PUT(req: NextRequest) {
     }
 
     if (logo) {
-      const bytes = await logo.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const fileName = `${Date.now()}-${logo.name}`;
-      const filePath = path.join(process.cwd(), "public/uploads", fileName);
-      await fs.writeFile(filePath, buffer);
-      uploadedPath = `/uploads/${fileName}`;
-      updateData.photo_url = uploadedPath;
+      uploadedPath = await uploadFileToS3(logo);
+      if (uploadedPath) {
+        updateData.photo_url = uploadedPath;
+      }
     }
 
     const updated = await Employee.findByIdAndUpdate(employee_id, updateData, {
@@ -274,14 +264,15 @@ export async function PUT(req: NextRequest) {
     }
 
     return NextResponse.json({
-        id: updated._id,
-        name: `${updated.first_name} ${updated.last_name}`,
-        email: updated.email,
-        phone: updated.phone,
-        address: updated.address,
-        city: updated.city,
-        route: updated.route || null,
-  });
+      id: updated._id,
+      photo_url: updated.photo_url || uploadedPath,
+      name: `${updated.first_name} ${updated.last_name}`,
+      email: updated.email,
+      phone: updated.phone,
+      address: updated.address,
+      city: updated.city,
+      route: updated.route || null,
+    });
   } catch (error) {
     console.error("❌ Error updating employee:", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
