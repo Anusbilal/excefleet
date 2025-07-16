@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
     }
     const { phone } = parsed.data;
     await connectDB();
-    const driver = await Driver.findOne({ mobile_number: phone });
+    const driver = await Driver.findOne({ login_phone: phone });
+    
     if (!driver) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }

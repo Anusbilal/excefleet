@@ -642,81 +642,6 @@
         }
       }
     },
-    "/api/employee/ride": {
-      "post": {
-        "tags": [
-          "Employees",
-          "Ride"
-        ],
-        "summary": "Create a ride entry",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Ride"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Ride created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Ride"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation or database error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "error": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "error": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/employee/rating": {
       "post": {
         "tags": [
@@ -1021,7 +946,7 @@
         }
       }
     },
-    "/employee/ride": {
+    "/api/employee/ride": {
       "post": {
         "tags": [
           "Ride"
@@ -2215,7 +2140,8 @@
     "/admin/vehicle": {
       "get": {
         "tags": [
-          "Admin","Vehicle"
+          "Admin",
+          "Vehicle"
         ],
         "summary": "Get vehicle by ID",
         "description": "Fetches a vehicle's details using its `vehicle_id`.",
@@ -2308,6 +2234,763 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/route": {
+      "post": {
+        "tags": [
+          "Admin",
+          "Routes"
+        ],
+        "summary": "Create a new route",
+        "description": "Creates a new route and links it with a driver and optionally their vehicle.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Morning Route"
+                  },
+                  "routes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "employee_id": {
+                          "type": "string",
+                          "description": "MongoDB ObjectId of the employee",
+                          "example": "64cabc1234567890abcdef12"
+                        },
+                        "address": {
+                          "type": "string",
+                          "example": "123 Main Street"
+                        },
+                        "location": {
+                          "type": "object",
+                          "properties": {
+                            "lat": {
+                              "type": "number",
+                              "example": 24.8607
+                            },
+                            "lng": {
+                              "type": "number",
+                              "example": 67.0011
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "employee_id",
+                        "address",
+                        "location"
+                      ]
+                    }
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "Karachi"
+                  },
+                  "from": {
+                    "type": "string",
+                    "example": "Office"
+                  },
+                  "to": {
+                    "type": "string",
+                    "example": "Client Site"
+                  },
+                  "kilometers": {
+                    "type": "number",
+                    "example": 12.5
+                  },
+                  "driver_id": {
+                    "type": "string",
+                    "description": "MongoDB ObjectId of the driver",
+                    "example": "64df1234567890abcdef12"
+                  }
+                },
+                "required": [
+                  "name",
+                  "routes",
+                  "city",
+                  "from",
+                  "to",
+                  "kilometers",
+                  "driver_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "64cabcd9876543210fedcba1"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Morning Route"
+                    },
+                    "city": {
+                      "type": "string",
+                      "example": "Karachi"
+                    },
+                    "from": {
+                      "type": "string",
+                      "example": "Office"
+                    },
+                    "to": {
+                      "type": "string",
+                      "example": "Client Site"
+                    },
+                    "kilometers": {
+                      "type": "number",
+                      "example": 12.5
+                    },
+                    "driver_name": {
+                      "type": "string",
+                      "example": "Ali Raza"
+                    },
+                    "driver_phone": {
+                      "type": "string",
+                      "example": "03001234567"
+                    },
+                    "vehicle_number": {
+                      "type": "string",
+                      "example": "ABC-123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "404": {
+            "description": "Driver or related resource not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/routes": {
+      "get": {
+        "tags": [
+          "Admin - Routes"
+        ],
+        "summary": "Get all routes",
+        "description": "Returns a list of all saved routes with driver and vehicle details.",
+        "responses": {
+          "200": {
+            "description": "List of routes retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "60f71bf75fc13c001c9e4c25"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Route A"
+                      },
+                      "city": {
+                        "type": "string",
+                        "example": "Lahore"
+                      },
+                      "from": {
+                        "type": "string",
+                        "example": "Gulberg"
+                      },
+                      "to": {
+                        "type": "string",
+                        "example": "DHA"
+                      },
+                      "kilometers": {
+                        "type": "number",
+                        "example": 12.5
+                      },
+                      "driver_name": {
+                        "type": "string",
+                        "example": "Ali Raza"
+                      },
+                      "driver_phone": {
+                        "type": "string",
+                        "example": "03001234567"
+                      },
+                      "vehicle_number": {
+                        "type": "string",
+                        "example": "ABC-123"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while fetching routes"
+          }
+        }
+      }
+    },
+    "/admin/route": {
+      "put": {
+        "tags": [
+          "Admin - Routes"
+        ],
+        "summary": "Update a route by ID",
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "MongoDB ObjectId of the route"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "routes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "employee_id": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        },
+                        "location": {
+                          "type": "object",
+                          "properties": {
+                            "lat": {
+                              "type": "number"
+                            },
+                            "lng": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "lat",
+                            "lng"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "employee_id",
+                        "address",
+                        "location"
+                      ]
+                    }
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "kilometers": {
+                    "type": "number"
+                  },
+                  "driver_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "routes",
+                  "city",
+                  "from",
+                  "to",
+                  "kilometers",
+                  "driver_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Route updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "employee_id": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "object",
+                            "properties": {
+                              "lat": {
+                                "type": "number"
+                              },
+                              "lng": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "city": {
+                      "type": "string"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "kilometers": {
+                      "type": "number"
+                    },
+                    "driver_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or validation failed"
+          },
+          "404": {
+            "description": "Route not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/admin/user": {
+      "post": {
+        "tags": [
+          "Admin",
+          "User"
+        ],
+        "summary": "Create a new admin/user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "location.lat": {
+                    "type": "number"
+                  },
+                  "location.lng": {
+                    "type": "number"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "super_admin",
+                      "admin",
+                      "user",
+                      "company"
+                    ]
+                  },
+                  "login_email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "login_password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "permission": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "companies",
+                        "drivers",
+                        "employees",
+                        "routes",
+                        "users"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "first_name",
+                  "last_name",
+                  "phone",
+                  "address",
+                  "location.lat",
+                  "location.lng",
+                  "role",
+                  "login_email",
+                  "login_password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "first_name": {
+                          "type": "string"
+                        },
+                        "last_name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "phone": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "super_admin",
+                            "admin",
+                            "user",
+                            "company"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User with this login_email already exists"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "tags": [
+          "Admin",
+          "User"
+        ],
+        "summary": "Fetch all admin/users",
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "64f59e558c5a2d001ed67890"
+                      },
+                      "first_name": {
+                        "type": "string",
+                        "example": "Ali"
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "example": "Raza"
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ali.raza@example.com"
+                      },
+                      "phone": {
+                        "type": "string",
+                        "example": "03001234567"
+                      },
+                      "role": {
+                        "type": "string",
+                        "enum": [
+                          "super_admin",
+                          "admin",
+                          "user",
+                          "company"
+                        ],
+                        "example": "admin"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/admin/user": {
+      "put": {
+        "tags": [
+          "Admin - Users"
+        ],
+        "summary": "Update a user by ID",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "MongoDB ObjectId of the user"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "photo_url": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "object",
+                    "properties": {
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "super_admin",
+                      "admin",
+                      "user",
+                      "company"
+                    ]
+                  },
+                  "login_email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "login_password": {
+                    "type": "string",
+                    "description": "New password (hashed or plain depending on system)"
+                  },
+                  "permission": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "companies",
+                        "drivers",
+                        "employees",
+                        "routes",
+                        "users"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "super_admin",
+                        "admin",
+                        "user",
+                        "company"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation or missing fields"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "tags": [
+          "Admin",
+          "Stats"
+        ],
+        "summary": "Get total counts of companies, employees, and drivers",
+        "responses": {
+          "200": {
+            "description": "Returns total counts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_companies": {
+                      "type": "string",
+                      "example": "12"
+                    },
+                    "total_employees": {
+                      "type": "string",
+                      "example": "87"
+                    },
+                    "total_drivers": {
+                      "type": "string",
+                      "example": "35"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       }
@@ -2703,6 +3386,49 @@
           "location",
           "driver_id"
         ]
+      },
+      "Route": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "64cabcd9876543210fedcba1"
+            },
+            "name": {
+              "type": "string",
+              "example": "Morning Route"
+            },
+            "city": {
+              "type": "string",
+              "example": "Karachi"
+            },
+            "from": {
+              "type": "string",
+              "example": "Office"
+            },
+            "to": {
+              "type": "string",
+              "example": "Client Site"
+            },
+            "kilometers": {
+              "type": "number",
+              "example": 12.5
+            },
+            "driver_name": {
+              "type": "string",
+              "example": "Ali Raza"
+            },
+            "driver_phone": {
+              "type": "string",
+              "example": "03001234567"
+            },
+            "vehicle_number": {
+              "type": "string",
+              "example": "ABC-123"
+            }
+          }
+        }
       }
     }
   }
