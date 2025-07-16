@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { Company } from "@/models/Company";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/mongoose";
-import path from "path";
-import fs from "fs/promises";
 import { companySchema } from "@/utils/validation/company"
 import { requireRole } from "@/utils/middleware/roleGuard";
+import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 import z from "zod";
 import { Types } from "mongoose";
 
@@ -52,13 +51,7 @@ export async function POST(req: NextRequest) {
     const logo = formData.get("logo") as File | null;
     let uploadedPath = "";
     if (logo && logo.size > 0) {
-      const bytes = await logo.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const fileName = `${Date.now()}-${logo.name}`;
-      const filePath = path.join(process.cwd(), "public/uploads", fileName);
-
-      await fs.writeFile(filePath, buffer);
-      uploadedPath = `/uploads/${fileName}`;
+      uploadedPath = await uploadFileToS3(logo);
     }
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
     const newCompany = await Company.create({
@@ -199,12 +192,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
     let uploadedPath: string | undefined = undefined;
 
     if (logo) {
-      const bytes = await logo.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const fileName = `${Date.now()}-${logo.name}`;
-      const filePath = path.join(process.cwd(), "public/uploads", fileName);
-      await fs.writeFile(filePath, buffer);
-      uploadedPath = `/uploads/${fileName}`;
+      uploadedPath = await uploadFileToS3(logo);
     }
 
     const updateData: any = {
