@@ -1,3 +1,4 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { signInSchema } from "@/utils/validation/authSchema";
 import { Employee } from "@/models/Employee";

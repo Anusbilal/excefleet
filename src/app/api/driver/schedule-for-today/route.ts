@@ -1,7 +1,6 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/utils/middleware/auth";
 import { driverScheduleSchema } from "@/utils/validation/scheduleSchema";
-import { connectDB } from "@/lib/mongoose";
 import { Schedule } from "@/models/Schedule";
 import mongoose from "mongoose";
 import { isValidObjectId } from "mongoose";
@@ -26,9 +25,6 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 const AVERAGE_SPEED_KMPH = 30;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const auth = await verifyToken(req);
-  if (auth instanceof NextResponse) return auth;
-
   try {
     const body = await req.json();
     const { searchParams } = new URL(req.url);
@@ -47,8 +43,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!parsed.success) {
       return NextResponse.json({ success: false, error: parsed.error.format() }, { status: 400 });
     }
-
-    await connectDB();
 
     const { latitude, longitude } = parsed.data;
 

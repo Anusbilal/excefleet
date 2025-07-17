@@ -1,20 +1,14 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/utils/middleware/roleGuard";
-import { connectDB } from "@/lib/mongoose";
 import { Employee } from "@/models/Employee";
 import { createUserSchema } from "@/utils/validation/userSchema";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
-import { checkCompanyExists } from "@/helper/CheckValidity";
+import { checkCompanyExists } from "@/helper/db-helpers/CheckValidity";
 import bcrypt from "bcryptjs";
-import { Types } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 
 // POST - Create Employee
 export async function POST(req: NextRequest) {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
-  await connectDB();
-
   try {
     const formData = await req.formData();
     const companyId = formData.get("company_id")?.toString();
@@ -107,16 +101,11 @@ export async function POST(req: NextRequest) {
 
 // GET - List Employees & Get By ID
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
-  await connectDB();
-
   const { searchParams } = req.nextUrl;
   const employeeId = searchParams.get("employee_id");
 
   if (employeeId) {
-    if (!Types.ObjectId.isValid(employeeId)) {
+    if (!isValidObjectId(employeeId)) {
       return NextResponse.json(
         { success: false, message: "Invalid employee_id" },
         { status: 400 }
@@ -209,16 +198,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
 // PUT - Update Employee
 export async function PUT(req: NextRequest) {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
-  await connectDB();
-
   try {
     const formData = await req.formData();
     const employee_id = formData.get("id")?.toString();
 
-    if (!employee_id || !Types.ObjectId.isValid(employee_id)) {
+    if (!employee_id || !isValidObjectId(employee_id)) {
       return NextResponse.json({ message: "Invalid employee ID" }, { status: 400 });
     }
 

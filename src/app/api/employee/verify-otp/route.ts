@@ -1,12 +1,12 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyOtpSchema } from "@/utils/validation/authSchema";
 import { Otp } from "@/models/Otp";
-import jwt from "jsonwebtoken";
+import * as jose from 'jose';
 import { Employee } from "@/models/Employee";
 import { connectDB } from "@/lib/mongoose";
 
-
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export async function POST(req: NextRequest) {
     try {
@@ -23,11 +23,12 @@ export async function POST(req: NextRequest) {
         await Otp.deleteMany({ email });
         await connectDB();
         const employee = await Employee.findOne({ login_email:email });
-        const token = jwt.sign(
-            { userId: employee._id, role: "employee", email: employee.email },
-            JWT_SECRET,
-            { expiresIn: "7d" }
-        );
+        const token = await new jose.SignJWT(
+            { userId: employee._id, role: "employee", email: employee.email }
+        )
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('7d')
+        .sign(JWT_SECRET);
 
         return NextResponse.json({
             message: "OTP verified successfully",

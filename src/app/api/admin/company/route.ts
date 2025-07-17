@@ -1,12 +1,11 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { Company } from "@/models/Company";
 import bcrypt from "bcryptjs";
-import { connectDB } from "@/lib/mongoose";
 import { companySchema } from "@/utils/validation/company"
-import { requireRole } from "@/utils/middleware/roleGuard";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
+import { isValidObjectId } from "mongoose";
 import z from "zod";
-import { Types } from "mongoose";
 
 export const config = {
   api: {
@@ -16,12 +15,7 @@ export const config = {
 
 // POST /api/companies
 export async function POST(req: NextRequest) {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   try {
-    await connectDB();
-
     const formData = await req.formData();
     const rawData = {
       location: {
@@ -91,17 +85,12 @@ export async function POST(req: NextRequest) {
   }
 }
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
     const company_id = searchParams.get("company_id");
 
     if (company_id) {
-      if (!Types.ObjectId.isValid(company_id)) {
+      if (!isValidObjectId(company_id)) {
         return NextResponse.json(
           { success: false, message: "Invalid company ID" },
           { status: 400 }
@@ -167,18 +156,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 }
 
 export async function PUT(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   const { searchParams } = new URL(req.url);
   const company_id = searchParams.get('company_id');
 
-  if (!company_id || !Types.ObjectId.isValid(company_id)) {
+  if (!company_id || !isValidObjectId(company_id)) {
     return NextResponse.json({ message: "Invalid company ID" }, { status: 400 });
   }
 
   try {
-    await connectDB();
 
     const formData = await req.formData();
     const logo = formData.get("logo") as File | null;

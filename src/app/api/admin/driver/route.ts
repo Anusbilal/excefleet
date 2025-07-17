@@ -1,13 +1,11 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/utils/middleware/roleGuard";
-import { connectDB } from "@/lib/mongoose";
 import { Driver } from "@/models/Driver";
-import { checkCompanyExists } from "@/helper/CheckValidity";
+import { checkCompanyExists } from "@/helper/db-helpers/CheckValidity";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
-import { Types } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Utility to save files
 async function saveFile(file: File): Promise<string> {
   if (!file || file.size === 0) {
     return "";
@@ -18,11 +16,7 @@ async function saveFile(file: File): Promise<string> {
 
 // POST: Create a new driver
 export async function POST(req: NextRequest) {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   try {
-    await connectDB();
     const formData = await req.formData();
 
     const photo = formData.get("photo") as File | null;
@@ -112,17 +106,12 @@ export async function POST(req: NextRequest) {
 
 // GET: List all drivers
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
     if (id) {
-      if (!Types.ObjectId.isValid(id)) {
+      if (!isValidObjectId(id)) {
         return NextResponse.json(
           { success: false, message: "Invalid driver ID" },
           { status: 400 }
@@ -198,12 +187,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
 // PUT: Update a driver
 export async function PUT(req: NextRequest) {
-  await connectDB();
-
   const formData = await req.formData();
   const id = formData.get("id")?.toString();
 
-  if (!id || !Types.ObjectId.isValid(id)) {
+  if (!id || !isValidObjectId(id)) {
     return NextResponse.json({ success: false, message: "Invalid driver ID" }, { status: 400 });
   }
 
