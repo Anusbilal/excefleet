@@ -13,17 +13,32 @@ import { SIDE_BAR_DATA } from "@/constant/sidebarData";
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { EFLogo, Logo } from "@/assets/svg";
+import { EFLogo, Logo, SideBarArrow } from "@/assets/svg";
+import { cn } from "@/lib/utils";
 
 export default function AppSidebar() {
 	const pathname = usePathname();
-	const { state, isMobile, setOpenMobile } = useSidebar();
+	const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
 
 	const isActive = (item: { title: string; url: string; icon: any }) =>
 		pathname === item.url || pathname.startsWith(item.url + "/");
 
 	return (
-		<Sidebar className='pt-10' collapsible='icon'>
+		<Sidebar className='pt-10 relative' collapsible='icon'>
+			<button
+				onClick={() => {
+					toggleSidebar();
+				}}
+				className='hidden md:flex size-5 absolute top-5 -right-5  cursor-pointer hover:bg-russian-violet-500/90 items-center justify-center   bg-russian-violet-500 rounded-tr-[4px] rounded-br-[4px] '
+			>
+				<SideBarArrow
+					className={cn(
+						"size-3 transition-transform duration-500",
+						state === "collapsed" && "rotate-180 ",
+					)}
+				/>
+			</button>
+
 			<SidebarHeader className='w-full mb-10 p-0 pl-6 '>
 				<Link href='/super-admin/dashboard'>
 					{!isMobile && state === "collapsed" ? (

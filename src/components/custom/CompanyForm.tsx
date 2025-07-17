@@ -54,6 +54,8 @@ const CompanyForm = ({
 					handleFileChange={onChange}
 					name='logo_url'
 					containerClassName='md:col-span-2 md:max-w-[350px]'
+					images={data?.logo_url}
+					imagesClassName='md:col-span-2'
 				/>
 
 				<Autocomplete

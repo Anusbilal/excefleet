@@ -21,3 +21,4 @@ export { default as StarIcon } from "./StarIcon.svg";
 export { default as UploadIcon } from "./UploadIcon.svg";
 export { default as MarkerIcon } from "./MarkerIcon.svg";
 export { default as DeleteIcon } from "./DeleteIcon.svg";
+export { default as SideBarArrow } from "./SideBarArrow.svg";

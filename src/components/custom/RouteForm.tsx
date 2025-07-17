@@ -3,8 +3,13 @@ import React from "react";
 import { Button } from "../ui/button";
 import CardContainer from "./CardContainer";
 import { MarkerIcon } from "@/assets/svg";
-import { TRoute, TRouteEmployee, TRouteEmployeeRow } from "@/types/route.types";
-import Autocomplete from "./Autocomplete";
+import {
+	TRoute,
+	TRouteDriverRow,
+	TRouteEmployee,
+	TRouteEmployeeRow,
+} from "@/types/route.types";
+import Autocomplete, { TAutocomplete } from "./Autocomplete";
 import { DUMMY_EMPLOYEE_ROUTE } from "@/constant/autocomplete";
 import { Chevron } from "@/assets/svg";
 import CustomInputField from "./CustomInputField";
@@ -17,12 +22,20 @@ type TProps = {
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	data?: Partial<TRoute>;
 	employeeRows: TRouteEmployeeRow[];
-	handleAutocompleteSearchChange: (
+	handleDriverSearch: (
+		e: React.ChangeEvent<HTMLInputElement>,
 		index: number,
-	) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-	handleAutocompleteSelect: (index: number) => (item: TRouteEmployee) => void;
+	) => void;
+	handleAutocompleteSelect: (item: TRouteEmployee, index: number) => void;
+	handleAutocompleteSearchChange: (
+		e: React.ChangeEvent<HTMLInputElement>,
+		index: number,
+	) => void;
+	handleDriverSelect: (item: TAutocomplete, index: number) => void;
 	disabledSubmitButton: boolean;
 	handleAddAnother: () => void;
+	handleAddNewDriver: () => void;
+	driverRows: TRouteDriverRow[];
 };
 
 const RouteForm = ({
@@ -34,10 +47,14 @@ const RouteForm = ({
 	handleAutocompleteSelect,
 	disabledSubmitButton,
 	handleAddAnother,
+	handleAddNewDriver,
+	handleDriverSearch,
+	handleDriverSelect,
+	driverRows,
 }: TProps) => {
 	return (
-		<CardContainer className='gap-8 '>
-			<div className='grid grid-cols-1 md:grid-cols-2  md:max-w-[716px] gap-4'>
+		<CardContainer className='gap-10 '>
+			<div className='grid grid-cols-1 md:grid-cols-2  md:max-w-[716px] gap-8'>
 				<div className='flex flex-col gap-2  md:col-span-2 '>
 					<span className='text-lg leading-[26px]font-semibold text-neutral-1000'>
 						Route name
@@ -67,10 +84,10 @@ const RouteForm = ({
 										<Autocomplete<(typeof DUMMY_EMPLOYEE_ROUTE)[number]>
 											data={item?.employeeOptions}
 											value={item.employeeSearch}
-											onChange={(e) => handleAutocompleteSearchChange(index)(e)}
+											onChange={(e) => handleAutocompleteSearchChange(e, index)}
 											selected={item?.employeeSelected}
 											handleSelect={(item) =>
-												handleAutocompleteSelect(index)(item)
+												handleAutocompleteSelect(item, index)
 											}
 											placeholder='Select employee'
 											icon={Chevron}
@@ -102,16 +119,48 @@ const RouteForm = ({
 					</div>
 				</div>
 
-				<div className='md:col-span-2 flex flex-col gap-4 h-auto'>
+				<div className='md:col-span-2 flex flex-col gap-4 '>
 					<span className='text-lg leading-[26px]  font-semibold text-neutral-1000'>
 						Map
 					</span>
 
 					<CustomGoogleMap employeeRows={employeeRows} />
 				</div>
+
+				<Separator className='md:col-span-2 my-2' />
+
+				<div className='md:col-span-2 flex flex-col gap-4'>
+					<span className='text-lg leading-[26px] md:col-span-2 font-semibold text-neutral-1000'>
+						Select driver
+					</span>
+
+					{driverRows.map((item, index) => {
+						return (
+							<Autocomplete
+								key={index}
+								data={item?.driverOptions}
+								value={item?.driverSearch}
+								onChange={(e) => handleDriverSearch(e, index)}
+								selected={item?.driverSelected}
+								handleSelect={(e) => handleDriverSelect(e, index)}
+								placeholder='Select driver'
+								icon={Chevron}
+								className='md:max-w-[350px]'
+							/>
+						);
+					})}
+
+					<Button
+						variant='outline'
+						className=' md:max-w-[200px]  border border-russian-violet-500 rounded-[8px] p-4 text-russian-violet-500'
+						onClick={handleAddNewDriver}
+					>
+						Add a new driver
+					</Button>
+				</div>
 			</div>
 
-			<div className='flex w-full items-center justify-between mt-2'>
+			<div className='flex w-full items-center justify-between '>
 				<BackButton />
 
 				<Button

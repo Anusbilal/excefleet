@@ -2,7 +2,7 @@ import { TAutocomplete } from "@/components/custom/Autocomplete";
 
 export type TDriver = {
 	id: string;
-	photo_url: string;
+	photo_url: File;
 	first_name: string;
 	last_name: string;
 	email: string;
@@ -15,8 +15,8 @@ export type TDriver = {
 		lat: number;
 		lng: number;
 	};
-	cnic_image_url: string;
-	license_image_url: string;
+	cnic_image_url: File;
+	license_image_url: File;
 	login_phone: string;
 	pin: string;
 	company_id: TAutocomplete;

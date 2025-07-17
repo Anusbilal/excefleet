@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import CardContainer from "./CardContainer";
 import FileUploader from "./FileUploader";
-import { DeleteIcon, Eye, EyeOff, MarkerIcon, UploadIcon } from "@/assets/svg";
+import { DeleteIcon, MarkerIcon, UploadIcon } from "@/assets/svg";
 import { TDriver } from "@/types/driver.types";
 import Autocomplete, { TAutocomplete } from "./Autocomplete";
 import { DUMMY_AUTOCOMPLETE_DATA } from "@/constant/autocomplete";
@@ -47,6 +47,8 @@ const DriverForm = ({
 					handleFileChange={onChange}
 					name='photo_url'
 					containerClassName='md:col-span-2 lg:max-w-[350px]'
+					images={data?.photo_url}
+					imagesClassName='md:col-span-2'
 				/>
 
 				<CustomInputField
@@ -122,21 +124,25 @@ const DriverForm = ({
 					Driver documents
 				</span>
 
-				<FileUploader
-					icon={UploadIcon}
-					title='Upload CNIC'
-					handleFileChange={onChange}
-					name='cnic_image_url'
-					containerClassName='md:col-span-2 lg:col-span-1'
-				/>
+				<div className='md:col-span-2 flex flex-col md:flex-row md:items-center gap-4'>
+					<FileUploader
+						icon={UploadIcon}
+						title='Upload CNIC'
+						handleFileChange={onChange}
+						name='cnic_image_url'
+						containerClassName='md:max-w-[350px] w-full'
+						images={data?.cnic_image_url}
+					/>
 
-				<FileUploader
-					icon={UploadIcon}
-					title='Upload Driving license'
-					handleFileChange={onChange}
-					name='license_image_url'
-					containerClassName='md:col-span-2 lg:col-span-1'
-				/>
+					<FileUploader
+						icon={UploadIcon}
+						title='Upload Driving license'
+						handleFileChange={onChange}
+						name='license_image_url'
+						containerClassName='md:max-w-[350px] w-full'
+						images={data?.license_image_url}
+					/>
+				</div>
 
 				<Button
 					variant='outline'

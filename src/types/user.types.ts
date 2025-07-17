@@ -3,7 +3,7 @@ import { TAutocomplete } from "@/components/custom/Autocomplete";
 export type UserRole = "admin" | "employee" | "driver";
 
 export type TUser = {
-	image_url: string;
+	image_url: File;
 	first_name: string;
 	last_name: string;
 	email: string;

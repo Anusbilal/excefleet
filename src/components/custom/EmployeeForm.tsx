@@ -86,6 +86,8 @@ const EmpolyeeForm = ({
 					handleFileChange={onChange}
 					name='photo_url'
 					containerClassName='md:col-span-2 md:max-w-[350px]'
+					images={data?.photo_url}
+					imagesClassName='md:col-span-2'
 				/>
 
 				<CustomInputField

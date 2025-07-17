@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import CardContainer from "./CardContainer";
 import FileUploader from "./FileUploader";
-import { Eye, EyeOff, MarkerIcon, UploadIcon } from "@/assets/svg";
+import { MarkerIcon, UploadIcon } from "@/assets/svg";
 import { TVehicle } from "@/types/vehicle.types";
 import Autocomplete, { TAutocomplete } from "./Autocomplete";
 import { DUMMY_AUTOCOMPLETE_DATA } from "@/constant/autocomplete";
@@ -46,6 +46,9 @@ const VehicleForm = ({
 					handleFileChange={onChange}
 					name='image_url'
 					containerClassName='md:col-span-2 md:max-w-[350px] md:mb-4'
+					multiple
+					imagesClassName='md:col-span-2  md:mb-4'
+					images={data?.image_url}
 				/>
 
 				<span className='text-lg leading-[26px] md:col-span-2 font-semibold text-neutral-1000'>
@@ -53,16 +56,9 @@ const VehicleForm = ({
 				</span>
 
 				<CustomInputField
-					placeholder='First name'
-					name='first_name'
-					value={data?.first_name || ""}
-					onChange={onChange}
-				/>
-
-				<CustomInputField
-					placeholder='Last name'
-					name='last_name'
-					value={data?.last_name || ""}
+					placeholder='Full name'
+					name='full_name'
+					value={data?.full_name || ""}
 					onChange={onChange}
 				/>
 
@@ -95,6 +91,7 @@ const VehicleForm = ({
 					name='registration_number'
 					value={data?.registration_number || ""}
 					onChange={onChange}
+					className='md:col-span-2'
 				/>
 
 				<Autocomplete
