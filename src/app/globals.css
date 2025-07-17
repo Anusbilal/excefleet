@@ -10,7 +10,8 @@ body {
 @theme {
 	--font-poppins: "Poppins";
 	--font-inter: "Inter";
-	--font-dm_sans: "DM-Sans"
+	--font-dm_sans: "DM-Sans";
+	--font-roboto: "Roboto";
 
 	/* Top level colors */
 	--color-primary: #00da9d;
@@ -19,7 +20,7 @@ body {
 
 	/* Primary scale */
 	--color-primary-10: #55b98e1a;
-	--color-primary-20: #F3F3F1;
+	--color-primary-20: #f3f3f1;
 	--color-primary-100: #ecfffa;
 	--color-primary-200: #c0ffed;
 	--color-primary-300: #68f7cf;
@@ -33,7 +34,7 @@ body {
 
 	/* Secondary scale */
 	--color-secondary-10: #33bfd71a;
-	--color-secondary-20: #E8FAFB;
+	--color-secondary-20: #e8fafb;
 	--color-secondary-100: #d6f2f7;
 	--color-secondary-200: #ade5ef;
 	--color-secondary-300: #85d9e7;
@@ -64,11 +65,12 @@ body {
 	--color-neutral-1100: #414141;
 	--color-neutral-1200: #b8b8b8;
 	--color-neutral-1300: rgba(65, 65, 65, 0.5);
-	--color-neutral-1400: #8E9AA0;
+	--color-neutral-1400: #8e9aa0;
 
 	/* Russian Violet scale */
 	--color-russian-violet-10: #5f27911a;
 	--color-russian-violet-50: #5f279180;
+	--color-russian-violet-20: #fef7ff;
 	--color-russian-violet-100: #d8bfee;
 	--color-russian-violet-200: #c49fe5;
 	--color-russian-violet-300: #b07fdc;
@@ -79,16 +81,16 @@ body {
 	--color-russian-violet-800: #4b1f72;
 	--color-russian-violet-900: #361653;
 	--color-russian-violet-1000: #220e33;
-	--color-russian-violet-1100:#F3E5FF;
-	--color-russian-violet-1200:#653089;
+	--color-russian-violet-1100: #f3e5ff;
+	--color-russian-violet-1200: #653089;
 
 	/* Red scale */
 	--color-red-10: #fb37481a;
-	--color-red-20: #FFEBEF;
+	--color-red-20: #ffebef;
 	--color-red-100: #fb3748;
 	--color-red-200: #d00416;
 	--color-red-300: #ec221f;
-	--color-red-400:  #B52643;
+	--color-red-400: #b52643;
 
 	/* Yellow scale */
 	--color-yellow-10: #ffdb431a;
@@ -111,10 +113,10 @@ body {
 	--color-default-60: rgba(20, 20, 20, 0.4);
 	--color-default-70: #1d1b20;
 	--color-default-80: #2c2c2c;
-	--color-default-90: #49454F;
+	--color-default-90: #49454f;
 
 	/* Background and border */
-	--color-background-10:#EDF7F9;
+	--color-background-10: #edf7f9;
 	--color-background-disabled: #d9d9d9;
 	--color-border-disabled: #b3b3b3;
 }

@@ -133,12 +133,14 @@ function CustomGoogleMap({ employeeRows }: TProps) {
 					<span>{toName}</span>
 				</div>
 
-				<div className='flex items-center flex-wrap gap-x-[10px]  md:gap-[10px] '>
+				<div className='flex items-center flex-wrap gap-x-[10px]  md:gap-[10px] h-full'>
 					<span className='font-normal'>Pickups</span>
 					<span>{pickupCount}</span>
-					<Separator orientation='vertical' className='bg-neutral-600 ml-1.5' />
-					<span className='font-normal'>Kilometers (one-way)</span>
-					<span>{distanceKm?.toFixed(2) || "-"}</span>
+
+					<span className='font-normal border-l border-neutral-600 pl-1.5'>
+						Kilometers (one-way)
+					</span>
+					<span>{distanceKm?.toFixed(2) || "0"}</span>
 				</div>
 			</div>
 		</>

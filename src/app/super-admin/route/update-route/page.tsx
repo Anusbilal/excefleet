@@ -13,6 +13,11 @@ const UpdateRoute = () => {
 		onSubmit,
 		employeeRows,
 		handleAddAnother,
+
+		handleAddNewDriver,
+		handleDriverSearch,
+		handleDriverSelect,
+		driverRows,
 	} = useUpdateRoute();
 
 	return (
@@ -28,6 +33,10 @@ const UpdateRoute = () => {
 				handleAutocompleteSelect={handleAutocompleteSelect}
 				disabledSubmitButton={Object.keys(routeData).length === 0}
 				handleAddAnother={handleAddAnother}
+				driverRows={driverRows}
+				handleAddNewDriver={handleAddNewDriver}
+				handleDriverSearch={handleDriverSearch}
+				handleDriverSelect={handleDriverSelect}
 			/>
 		</Layout>
 	);

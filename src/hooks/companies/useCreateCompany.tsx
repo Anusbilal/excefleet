@@ -23,7 +23,7 @@ const useCreateCompany = () => {
 			let value: unknown;
 			if (event?.target) {
 				if (event.target.type === "file") {
-					value = event.target.files?.[0] ?? undefined;
+					value = event.target.files ?? undefined;
 				} else {
 					value = event.target.value;
 				}

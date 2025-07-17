@@ -22,6 +22,12 @@ export type TRouteEmployeeRow = {
 	addressText: string;
 };
 
+export type TRouteDriverRow = {
+	driverSearch: string;
+	driverOptions: TAutocomplete[];
+	driverSelected?: TAutocomplete;
+};
+
 export type TRouteEmployee = {
 	id: string;
 	name: string;

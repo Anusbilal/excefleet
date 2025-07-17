@@ -14,6 +14,7 @@ type TProps = React.ComponentProps<"input"> & {
 	placeholder?: string;
 	preIconClassName?: string;
 	onViewPassword?: () => void;
+	errorMessage?: string;
 };
 
 const CustomInputField = ({
@@ -23,6 +24,7 @@ const CustomInputField = ({
 	placeholder,
 	onViewPassword,
 	inputClassName,
+	errorMessage,
 	preIconClassName,
 	...props
 }: TProps) => {
@@ -41,6 +43,7 @@ const CustomInputField = ({
 				autoComplete='on'
 				{...props}
 				className={cn(inputClassName)}
+				errorMessage={errorMessage}
 			/>
 
 			{PostIcon && (

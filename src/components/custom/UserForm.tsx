@@ -47,10 +47,12 @@ const UserForm = ({
 			<div className='grid grid-cols-1 md:grid-cols-2  md:max-w-[716px] gap-4'>
 				<FileUploader
 					icon={UploadIcon}
-					title='Upload picture'
+					title='Upload a profile picture'
 					handleFileChange={onChange}
 					name='image_url'
 					containerClassName='md:col-span-2 md:max-w-[350px]'
+					imagesClassName='md:col-span-2'
+					images={data?.image_url}
 				/>
 
 				<span className='text-lg leading-[26px] md:col-span-2 font-semibold text-neutral-1000'>
@@ -97,15 +99,42 @@ const UserForm = ({
 					iconClassName='rotate-0'
 				/>
 
-				<Autocomplete
-					data={USER_ROLE_DATA}
-					value={autocompleteFilters.role}
-					onChange={handleAutocompleteSearchChange("role")}
-					selected={data?.role}
-					handleSelect={handleAutocompleteSelect("role")}
-					placeholder='Role'
-					icon={Chevron}
-				/>
+				<Separator className='md:col-span-2 my-2' />
+
+				<div className='md:col-span-2 flex flex-col gap-[9px]'>
+					<span className='text-lg leading-[26px]  font-semibold text-neutral-1000'>
+						Permissions
+					</span>
+
+					<span className='text-xs leading-[18px]  font-normal text-neutral-1000'>
+						Grant the permissions that allow this user to add content.
+					</span>
+				</div>
+
+				<div className='flex flex-col gap-4 md:col-span-2'>
+					<Autocomplete
+						data={USER_ROLE_DATA}
+						value={autocompleteFilters.role}
+						onChange={handleAutocompleteSearchChange("role")}
+						selected={data?.role}
+						handleSelect={handleAutocompleteSelect("role")}
+						placeholder='Role'
+						icon={Chevron}
+						className='max-w-[350px]'
+					/>
+
+					{PERMISSIONS.map((permission) => (
+						<div key={permission.key} className='flex  items-center gap-3'>
+							<Checkbox
+								checked={data?.permission?.includes(permission.key)}
+								onCheckedChange={() => handlePermission(permission.key)}
+							/>
+							<span className='text-sm text-default-10 font-normal font-inter'>
+								{permission.label}
+							</span>
+						</div>
+					))}
+				</div>
 
 				<Separator className='md:col-span-2 my-2' />
 
@@ -130,32 +159,6 @@ const UserForm = ({
 					value={data?.password || ""}
 					onChange={onChange}
 				/>
-
-				<Separator className='md:col-span-2 my-2' />
-
-				<div className='md:col-span-2 flex flex-col gap-[9px]'>
-					<span className='text-lg leading-[26px]  font-semibold text-neutral-1000'>
-						Permissions
-					</span>
-
-					<span className='text-xs leading-[18px]  font-normal text-neutral-1000'>
-						Grant the permissions that allow this user to add content.
-					</span>
-				</div>
-
-				<div className='flex flex-col gap-2 md:col-span-2'>
-					{PERMISSIONS.map((permission) => (
-						<div key={permission.key} className='flex  items-center gap-3'>
-							<Checkbox
-								checked={data?.permission?.includes(permission.key)}
-								onCheckedChange={() => handlePermission(permission.key)}
-							/>
-							<span className='text-sm text-default-10 font-normal font-inter'>
-								{permission.label}
-							</span>
-						</div>
-					))}
-				</div>
 			</div>
 
 			<div className='flex w-full items-center justify-between'>
