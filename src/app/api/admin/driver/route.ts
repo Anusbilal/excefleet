@@ -1,7 +1,7 @@
 import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { Driver } from "@/models/Driver";
-import { checkCompanyExists } from "@/helper/CheckValidity";
+import { checkCompanyExists } from "@/helper/db-helpers/CheckValidity";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 import { isValidObjectId, Types } from "mongoose";
 import bcrypt from "bcryptjs";

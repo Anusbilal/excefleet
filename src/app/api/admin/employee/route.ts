@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Employee } from "@/models/Employee";
 import { createUserSchema } from "@/utils/validation/userSchema";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
-import { checkCompanyExists } from "@/helper/CheckValidity";
+import { checkCompanyExists } from "@/helper/db-helpers/CheckValidity";
 import bcrypt from "bcryptjs";
 import { isValidObjectId, Types } from "mongoose";
 

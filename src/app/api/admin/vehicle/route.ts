@@ -1,7 +1,7 @@
 import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { Vehicle } from "@/models/Vehicle";
-import { checkDriverExists } from "@/helper/CheckValidity";
+import { checkDriverExists } from "@/helper/db-helpers/CheckValidity";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 
 export const config = {
