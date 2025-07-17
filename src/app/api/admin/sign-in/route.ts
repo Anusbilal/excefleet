@@ -1,3 +1,4 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { Admin } from "@/models/Admin";
 import bcrypt from "bcryptjs";
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 401 });
     }
 
-    const token = generateToken({ id: admin._id, role: admin.role });
+    const token = await generateToken({ id: admin._id, role: admin.role });
 
     return NextResponse.json(
       { message: "Signed in successfully.", token },

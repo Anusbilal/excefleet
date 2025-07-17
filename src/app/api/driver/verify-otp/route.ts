@@ -1,11 +1,11 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { signInSchema } from "@/utils/validation/authSchema";
 import { Driver } from "@/models/Driver";
-import { connectDB } from "@/lib/mongoose";
-import jwt from "jsonwebtoken";
+import * as jose from 'jose';
 import bcrypt from "bcryptjs";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,9 +17,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { phone, pin } = parsed.data;
-
-    await connectDB();
-
     const driver = await Driver.findOne({ login_phone: phone });
     if (!driver) {
       return NextResponse.json({ error: "Invalid phone number or pin" }, { status: 401 });
@@ -36,15 +33,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid phone number or pin" }, { status: 401 });
     }
 
-    const token = jwt.sign(
-      {
+    const token = await new jose.SignJWT({
         userId: driver._id,
         role: "driver",
         phone: driver.login_phone,
-      },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setExpirationTime('7d')
+    .sign(JWT_SECRET);
 
     return NextResponse.json({
       message: "PIN verified successfully",

@@ -1,80 +1,62 @@
 import { Company } from "@/models/Company";
 import { Employee } from "@/models/Employee";
-import { Driver } from "@/models/Driver"
-import { connectDB } from "@/lib/mongoose";
-import { Types } from "mongoose";
+import { Driver } from "@/models/Driver";
+import { isValidObjectId, Model } from "mongoose";
 
+interface CheckResult {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
 
-export async function checkEmployeeExists(employee_id: string) {
-  await connectDB();
-
-  if (!Types.ObjectId.isValid(employee_id)) {
+/**
+ * Generic function to check if a document exists by ID
+ */
+async function checkDocumentExists(model: Model<any>, id: string, entityName: string): Promise<CheckResult> {
+  if (!isValidObjectId(id)) {
     return {
       success: false,
-      message: "Invalid employee_id",
+      message: `Invalid ${entityName}_id`,
     };
   }
 
-  const employee = await Employee.findById(employee_id);
-  if (!employee) {
+  const document = await model.findById(id);
+  if (!document) {
     return {
       success: false,
-      message: "Employee not found",
+      message: `${entityName} not found`,
     };
   }
 
   return {
     success: true,
-    employee,
+    data: document,
   };
 }
 
+/**
+ * Specific wrappers for each model (optional, for clarity)
+ */
+export async function checkEmployeeExists(employee_id: string) {
+  const result = await checkDocumentExists(Employee, employee_id, "employee");
+  if (result.success) {
+    return { success: true, employee: result.data };
+  }
+  return result;
+}
 
 export async function checkCompanyExists(company_id: string) {
-  await connectDB();
-
-  if (!Types.ObjectId.isValid(company_id)) {
-    return {
-      success: false,
-      message: "Invalid company_id",
-    };
+  const result = await checkDocumentExists(Company, company_id, "company");
+  if (result.success) {
+    return { success: true, company: result.data };
   }
-
-  const company = await Company.findById(company_id);
-  if (!company) {
-    return {
-      success: false,
-      message: "Company not found",
-    };
-  }
-
-  return {
-    success: true,
-    company,
-  };
+  return result;
 }
 
-
 export async function checkDriverExists(driver_id: string) {
-  await connectDB();
-
-  if (!Types.ObjectId.isValid(driver_id)) {
-    return {
-      success: false,
-      message: "Invalid driver_id",
-    };
+  const result = await checkDocumentExists(Driver, driver_id, "driver");
+  if (result.success) {
+    return { success: true, driver: result.data };
   }
-
-  const driver = await Driver.findById(driver_id);
-  if (!driver) {
-    return {
-      success: false,
-      message: "Driver not found",
-    };
-  }
-
-  return {
-    success: true,
-    driver,
-  };
+  return result;
 }
