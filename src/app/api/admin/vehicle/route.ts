@@ -1,8 +1,7 @@
-import { requireRole } from "@/utils/middleware/roleGuard";
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongoose";
 import { Vehicle } from "@/models/Vehicle";
-import { checkDriverExists } from "@/helper/CheckValidity";
+import { checkDriverExists } from "@/helper/db-helpers/CheckValidity";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 
 export const config = {
@@ -12,12 +11,7 @@ export const config = {
 };
 
 export async function POST(req: NextRequest) {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   try {
-    await connectDB();
-
     const formData = await req.formData();
     const files = formData.getAll("images") as File[];
     const driverId = formData.get("driver_id")?.toString();
@@ -98,15 +92,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   const { searchParams } = new URL(req.url);
   const vehicleId = searchParams.get("vehicle_id");
 
   try {
-    await connectDB();
-
     if (vehicleId) {
       const vehicle = await Vehicle.findById(vehicleId);
       if (!vehicle) {
@@ -171,8 +160,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 }
 
 export async function PUT(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
   const { searchParams } = new URL(req.url);
   const vehicleId = searchParams.get('vehicle_id');
   if (!vehicleId) {
@@ -183,8 +170,6 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    await connectDB();
-
     const formData = await req.formData();
 
     const existingVehicle = await Vehicle.findById(vehicleId);

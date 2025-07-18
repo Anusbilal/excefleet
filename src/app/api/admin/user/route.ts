@@ -1,8 +1,8 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { User } from "@/models/User"; 
-import { connectDB } from "@/lib/mongoose";
-import { Types } from "mongoose";
+import { isValidObjectId } from "mongoose";
 import { uploadFileToS3 } from "@/utils/upload/s3Uploader";
 
 async function saveFile(file: File): Promise<string> {
@@ -12,8 +12,6 @@ async function saveFile(file: File): Promise<string> {
 
 export async function POST(req: NextRequest) {
   try {
-    await connectDB();
-
     const formData = await req.formData();
 
     const file = formData.get("photo") as File | null;
@@ -76,7 +74,6 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
-    await connectDB();
     const { searchParams } = new URL(req.url);
     const user_id = searchParams.get("user_id");
 
@@ -156,7 +153,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
 export async function PUT(req: NextRequest): Promise<NextResponse> {
     try {
-        await connectDB();
         const { searchParams } = new URL(req.url);
         const user_id = searchParams.get('user_id');
         if (!user_id) {
@@ -177,7 +173,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
             login_password,
             permission,
         } = body;
-        if (!user_id || !Types.ObjectId.isValid(user_id)) {
+        if (!user_id || !isValidObjectId(user_id)) {
             return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
         }
         const user = await User.findById(user_id);
@@ -218,3 +214,4 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }
+

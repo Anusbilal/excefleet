@@ -1,3 +1,4 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongoose";
 import { Admin } from "@/models/Admin";

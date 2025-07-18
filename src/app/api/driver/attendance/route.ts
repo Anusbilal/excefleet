@@ -1,13 +1,10 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/utils/middleware/auth";
 import mongoose from "mongoose";
 import { DriverAttendance } from "@/models/DriverAttendance";
 import { driverAttendanceSchema } from "@/utils/validation/driverAttendanceSchema";
 
 export async function POST(req: NextRequest) {
-  const auth = await verifyToken(req);
-  if (auth instanceof NextResponse) return auth;
-
   try {
     const body = await req.json();
     const parsed = driverAttendanceSchema.safeParse(body);

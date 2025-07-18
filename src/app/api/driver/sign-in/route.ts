@@ -1,7 +1,7 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { signInSchema } from "@/utils/validation/authSchema";
 import { Driver } from "@/models/Driver";
-import { connectDB } from "@/lib/mongoose";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
     }
     const { phone } = parsed.data;
-    await connectDB();
     const driver = await Driver.findOne({ login_phone: phone });
     
     if (!driver) {

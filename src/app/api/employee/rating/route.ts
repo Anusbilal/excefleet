@@ -1,17 +1,11 @@
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/utils/middleware/auth";
-import { connectDB } from "@/lib/mongoose";
 import { Rating } from "@/models/Rating";
 import { Employee } from "@/models/Employee";
 import { createRatingSchema } from "@/utils/validation/ratingSchema";
 import mongoose from "mongoose";
 
 export async function POST(req: NextRequest) {
-  const auth = await verifyToken(req);
-  if (auth instanceof NextResponse) return auth;
-
-  await connectDB();
-
   try {
     const body = await req.json();
 

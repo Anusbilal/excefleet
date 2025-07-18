@@ -1,6 +1,5 @@
-import { requireRole } from "@/utils/middleware/roleGuard";
+import "@/lib/mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongoose";
 import { RouteModel } from "@/models/Route";
 import { Vehicle } from "@/models/Vehicle";
 import { Driver } from "@/models/Driver";
@@ -25,14 +24,8 @@ type PopulatedRoute = {
 
 
 export async function POST(req: NextRequest) {
-  const auth = await requireRole(req, ["admin", "super_admin"]);
-  if (auth instanceof NextResponse) return auth;
-
   try {
-    await connectDB();
-
     const body = await req.json();
-
     const {
       name,
       routes,
@@ -43,7 +36,7 @@ export async function POST(req: NextRequest) {
       driver_id,
     } = body;
 
-    if (!Types.ObjectId.isValid(driver_id)) {
+    if (!isValidObjectId(driver_id)) {
       return NextResponse.json({ message: "Invalid driver_id." }, { status: 400 });
     }
 
@@ -54,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     for (const route of routes) {
       const { employee_id } = route;
-      if (!Types.ObjectId.isValid(employee_id)) {
+      if (!isValidObjectId(employee_id)) {
         return NextResponse.json(
           { message: `Invalid employee_id: ${employee_id}` },
           { status: 400 }
@@ -102,8 +95,6 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(req.url);
     const route_id = searchParams.get("route_id");
 
@@ -202,7 +193,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
 export async function PUT(req: NextRequest): Promise<NextResponse> {
   try {
-    await connectDB();
     const { searchParams } = new URL(req.url);
     const route_id = searchParams.get('route_id');
     if (!route_id) {
