@@ -1,6 +1,3 @@
-// import Cart from "@/assets/svg/Cart.svg?react";
-// import Users from "@/assets/svg/Users.svg?react";
-// import Products from "@/assets/svg/Products.svg?react";
 import {
 	Companies,
 	Dashboard,
@@ -30,7 +27,7 @@ export const SIDE_BAR_DATA = [
 	},
 	{
 		title: "Vehicle",
-		url: "/super-admin/vehicle",
+		url: "/super-admin/vehicles",
 		icon: Vehicle,
 	},
 	{
@@ -40,7 +37,7 @@ export const SIDE_BAR_DATA = [
 	},
 	{
 		title: "Route",
-		url: "/super-admin/route",
+		url: "/super-admin/routes",
 		icon: Route,
 	},
 	{

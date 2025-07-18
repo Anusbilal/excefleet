@@ -2,15 +2,19 @@ import {
 	Pagination,
 	PaginationContent,
 	PaginationItem,
-	PaginationPrevious,
-	PaginationNext,
 	SelectRowsPerPage,
 	PaginationLink,
 	PaginationEllipsis,
 } from "../ui/pagination";
-import { COLORS } from "@/constant/colors";
-import SimpleTable from "./SimpleTable";
 import { PaginationArrow } from "@/assets/svg";
+import {
+	Table,
+	TableBody,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "../ui/table";
+import { cn } from "@/lib/utils";
 
 export type THead = {
 	title: string;
@@ -49,7 +53,20 @@ const CustomTable = ({
 }: TProps) => {
 	return (
 		<div className='w-full bg-white border border-neutral-200 shadow-[0px_16px_32px_-4px_#0C0C0D1A] rounded-[8px] overflow-hidden'>
-			<SimpleTable head={head}>{children}</SimpleTable>
+			<Table>
+				<TableHeader>
+					<TableRow className='!border-b-2 border-secondary-600 hover:bg-background-10  bg-background-10  '>
+						{head.map((item, index) => {
+							return (
+								<TableHead key={index} className={cn("", item?.className)}>
+									{item?.title}
+								</TableHead>
+							);
+						})}
+					</TableRow>
+				</TableHeader>
+				<TableBody>{children}</TableBody>
+			</Table>
 
 			{remaining && handleChangePageSize && (
 				<div

@@ -65,8 +65,8 @@ const Autocomplete = <T extends TAutocomplete>({
 		<div className={cn("w-full", className)}>
 			<div ref={containerRef} className='relative'>
 				<input
-					id='autocomplete-input'
-					name='autocomplete-input'
+					id={placeholder}
+					name={placeholder}
 					disabled={disabled}
 					value={selected?.name ?? value ?? ""}
 					onChange={onChange}
@@ -83,7 +83,7 @@ const Autocomplete = <T extends TAutocomplete>({
 
 				{/* Floating Label */}
 				<label
-					htmlFor='autocomplete-input'
+					htmlFor={placeholder}
 					className={cn(
 						"absolute text-sm peer-disabled:text-default-70/[.38]",
 						"duration-300 transform z-[2px] origin-[0] bg-transparent",

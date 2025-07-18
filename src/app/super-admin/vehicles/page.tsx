@@ -1,12 +1,12 @@
 "use client";
-import { Chevron, Employee } from "@/assets/svg";
+import { Chevron, Vehicle as VehicleIcon } from "@/assets/svg";
 import { PageTopBar, TablePageCard, CustomTable } from "@/components";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { EMPLOYEES_DATA, EMPLOYEES_HEAD_DATA } from "@/constant/tableData";
-import { useEmployees } from "@/hooks";
+import { TableRow, TableCell } from "@/components/ui/table";
+import { VEHICLES_HEAD_DATA, VEHICLES_DATA } from "@/constant/tableData";
+import { useVehicles } from "@/hooks";
 import React from "react";
 
-const Employees = () => {
+const Vehicle = () => {
 	const {
 		currentPageData,
 		disabledPagination,
@@ -18,26 +18,26 @@ const Employees = () => {
 		setPage,
 		page,
 		router,
-	} = useEmployees();
+	} = useVehicles();
 
 	return (
 		<>
-			<PageTopBar heading='Employees' isSearchBar />
+			<PageTopBar heading='Vehicles' isSearchBar />
 
 			<div className='flex flex-col gap-5 md:gap-10'>
 				<TablePageCard
-					heading='Add a new employee'
-					subHeading='You can begin adding new employee right from this point.'
-					buttontitle='Start adding employee'
-					icon={Employee}
-					onClick={() => router.push("/super-admin/employees/employee")}
+					heading='Add a new vehicles'
+					subHeading='You can begin adding new vehicles right from this point.'
+					buttontitle='Start adding vehicles'
+					icon={VehicleIcon}
+					onClick={() => router.push("/super-admin/vehicles/vehicle")}
 				/>
 
 				<CustomTable
-					head={EMPLOYEES_HEAD_DATA}
+					head={VEHICLES_HEAD_DATA}
 					disabledPagination={disabledPagination}
 					handleChangePageSize={handleChangePageSize}
-					remaining={`of ${EMPLOYEES_DATA.length} results`}
+					remaining={`of ${VEHICLES_DATA.length} results`}
 					handleNextPage={handleNextPage}
 					handlePrevPage={handlePrevPage}
 					pageSize={pageSize}
@@ -48,17 +48,15 @@ const Employees = () => {
 					{currentPageData?.map((item, index) => {
 						return (
 							<TableRow key={index}>
-								<TableCell>{item.employee}</TableCell>
-								<TableCell>{item.email}</TableCell>
+								<TableCell>{item.registrationNumber}</TableCell>
+								<TableCell>{item.registerWith}</TableCell>
 								<TableCell>{item.mobileNumber}</TableCell>
-								<TableCell>{item.city}</TableCell>
+								<TableCell>{item.registrationCity}</TableCell>
 								<TableCell>{item.address}</TableCell>
-								<TableCell>{item.route}</TableCell>
+								<TableCell>{item.driver}</TableCell>
 								<TableCell
-									className='font-normal text-xs text-russian-violet-1200'
-									onClick={() =>
-										router.push("/super-admin/employees/employee/1")
-									}
+									className='font-normal text-xs text-russian-violet-1200 font-poppins'
+									onClick={() => router.push("/super-admin/vehicles/vehicle/1")}
 								>
 									<div className='flex items-center gap-1 cursor-pointer'>
 										View details
@@ -74,4 +72,4 @@ const Employees = () => {
 	);
 };
 
-export default Employees;
+export default Vehicle;

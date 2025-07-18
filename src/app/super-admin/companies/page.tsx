@@ -1,6 +1,6 @@
 "use client";
 import { DummyUser } from "@/assets/images";
-import { Layout, PageTopBar, CustomTable, TablePageCard } from "@/components";
+import { PageTopBar, CustomTable, TablePageCard } from "@/components";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { COMPANY_HEAD_DATA, DUMMY_DATA } from "@/constant/tableData";
 import { useCompanies } from "@/hooks";
@@ -23,7 +23,7 @@ const Companies = () => {
 	} = useCompanies();
 
 	return (
-		<Layout>
+		<>
 			<PageTopBar heading='Companies' isSearchBar />
 
 			<div className='flex flex-col gap-5 md:gap-10'>
@@ -32,7 +32,7 @@ const Companies = () => {
 					subHeading='You can begin adding new companies right from this point.'
 					buttontitle='Start adding company'
 					icon={CompaniesIcon}
-					onClick={() => router.push("/super-admin/companies/create-company")}
+					onClick={() => router.push("/super-admin/companies/company")}
 				/>
 
 				<CustomTable
@@ -70,7 +70,7 @@ const Companies = () => {
 								<TableCell
 									className='font-normal text-xs text-russian-violet-1200'
 									onClick={() =>
-										router.push("/super-admin/companies/update-company")
+										router.push("/super-admin/companies/company/1")
 									}
 								>
 									<div className='flex items-center gap-1 cursor-pointer'>
@@ -83,7 +83,7 @@ const Companies = () => {
 					})}
 				</CustomTable>
 			</div>
-		</Layout>
+		</>
 	);
 };
 

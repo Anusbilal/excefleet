@@ -1,6 +1,6 @@
 "use client";
 import { Chevron, User } from "@/assets/svg";
-import { Layout, PageTopBar, TablePageCard, CustomTable } from "@/components";
+import { PageTopBar, TablePageCard, CustomTable } from "@/components";
 import { TableRow, TableCell } from "@/components/ui/table";
 import {
 	USER_MANAGEMENT_HEAD_DATA,
@@ -24,7 +24,7 @@ const UserManagement = () => {
 	} = useUserManagement();
 
 	return (
-		<Layout>
+		<>
 			<PageTopBar heading='User Management' isSearchBar />
 
 			<div className='flex flex-col gap-5 md:gap-10'>
@@ -33,9 +33,7 @@ const UserManagement = () => {
 					subHeading='You can begin adding new users right from this point.'
 					buttontitle='Start adding user'
 					icon={User}
-					onClick={() =>
-						router.push("/super-admin/user-management/create-user")
-					}
+					onClick={() => router.push("/super-admin/user-management/user")}
 				/>
 
 				<CustomTable
@@ -60,7 +58,7 @@ const UserManagement = () => {
 								<TableCell
 									className='font-normal text-xs text-russian-violet-1200'
 									onClick={() =>
-										router.push("/super-admin/user-management/update-user")
+										router.push("/super-admin/user-management/user/1")
 									}
 								>
 									<div className='flex items-center gap-1 cursor-pointer'>
@@ -73,7 +71,7 @@ const UserManagement = () => {
 					})}
 				</CustomTable>
 			</div>
-		</Layout>
+		</>
 	);
 };
 

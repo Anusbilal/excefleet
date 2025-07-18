@@ -1,7 +1,6 @@
 "use client";
 import { Chevron, Driver } from "@/assets/svg";
 import {
-	Layout,
 	PageTopBar,
 	TablePageCard,
 	CustomTable,
@@ -29,7 +28,7 @@ const Drivers = () => {
 	const [rating, setRating] = useState(0);
 
 	return (
-		<Layout>
+		<>
 			<PageTopBar heading='Drivers' isSearchBar />
 			<div className='flex flex-col gap-5 md:gap-10'>
 				<TablePageCard
@@ -37,7 +36,7 @@ const Drivers = () => {
 					subHeading='Start adding new drivers to your fleet and assign to respective companies right here.'
 					buttontitle='Start adding driver'
 					icon={Driver}
-					onClick={() => router.push("/super-admin/drivers/create-driver")}
+					onClick={() => router.push("/super-admin/drivers/driver")}
 				/>
 
 				<CustomTable
@@ -83,9 +82,7 @@ const Drivers = () => {
 								</TableCell>
 								<TableCell
 									className='font-normal text-xs text-russian-violet-1200'
-									onClick={() =>
-										router.push("/super-admin/drivers/update-driver")
-									}
+									onClick={() => router.push("/super-admin/drivers/driver/1")}
 								>
 									<div className='flex items-center gap-1 cursor-pointer'>
 										View details
@@ -97,7 +94,7 @@ const Drivers = () => {
 					})}
 				</CustomTable>
 			</div>
-		</Layout>
+		</>
 	);
 };
 

@@ -4,7 +4,6 @@ import { Chevron, Companies, Driver, Employee } from "@/assets/svg";
 import {
 	DashboardAnalyticCard,
 	DashboardCard,
-	Layout,
 	PageTopBar,
 	CustomTable,
 } from "@/components";
@@ -18,7 +17,7 @@ const Dashboard = () => {
 	const { router } = useDasboard();
 
 	return (
-		<Layout>
+		<>
 			<PageTopBar heading='Dashboard' isSearchBar />
 
 			<div className='flex flex-col gap-5 md:gap-10'>
@@ -109,7 +108,7 @@ const Dashboard = () => {
 					})}
 				</CustomTable>
 			</div>
-		</Layout>
+		</>
 	);
 };
 
